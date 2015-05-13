@@ -22,6 +22,10 @@ public class FrameProcessor implements IImageProcessor{
         this.frame = _frame;
     }
     
+    /*
+    returns a black and white image
+    the white portion is what matches 
+    */
     public BufferedImage applyFilter(BufferedImage frame, Filter filter){
         int precision = (filter.getUncertainty() < 0)? 0 : (filter.getUncertainty() > 100)? 100 : filter.getUncertainty();
         int[] _colorComp = {filter.getColor().getRed(),filter.getColor().getGreen(),filter.getColor().getBlue()};
