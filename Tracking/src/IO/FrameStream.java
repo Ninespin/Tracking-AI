@@ -9,20 +9,22 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 /**
  * Class that reads images and videos and sends them to be processed.
  * @author jeremi
  */
-public class FrameStream {
+public class FrameStream implements Runnable{
     
     private static final String IMAGE_EXCTENTION = ".png";
     
     private List<BufferedImage> images;
+    private List<IImageProcessor> processors;
+    
+    private Thread thread;
     
     public FrameStream(String pathName) throws IOException{
         File f = new File(pathName);
@@ -31,6 +33,8 @@ public class FrameStream {
         }
         
         images = getImages(getImagesInDirectory(f));
+        processors = new ArrayList<>();
+        thread = new Thread(this,"Image Stream input thread");
     }
     
     private List<BufferedImage> getImages(List<File> imagesFiles){
@@ -55,8 +59,23 @@ public class FrameStream {
         return images;
     }
     
-    private void setOutput(IImageProcessor processor){
-        
+    public void setOutput(IImageProcessor processor){
+        processors.add(processor);
     }
+    
+    public void start(){
+        thread.start();
+    }
+
+    @Override
+    public void run() {
+        for (BufferedImage next : images) {
+            for (IImageProcessor processor : processors) {
+                processor.process(next);
+            }
+        }
+    }
+    
+    
     
 }
