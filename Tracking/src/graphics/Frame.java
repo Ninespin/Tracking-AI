@@ -5,10 +5,24 @@
  */
 package graphics;
 
+import java.awt.image.BufferedImage;
+
 /**
  *
  * @author jeremi
  */
 public class Frame {
+    
+    private BufferedImage image;
+
+    public Frame(BufferedImage image) {
+        this.image = image;
+    }
+
+    public BufferedImage getImage() {
+        return image;
+    }
+    
+    
     
 }

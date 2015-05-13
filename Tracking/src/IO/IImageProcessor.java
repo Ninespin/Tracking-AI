@@ -5,12 +5,12 @@
  */
 package IO;
 
-import java.awt.image.BufferedImage;
+import graphics.Frame;
 
 /**
  *
  * @author arnaud
  */
 public interface IImageProcessor {
-    public abstract void process(BufferedImage img);
+    public abstract void process(Frame frame);
 }

@@ -5,6 +5,7 @@
  */
 package IO;
 
+import graphics.Frame;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -73,7 +74,7 @@ public class FrameStream implements Runnable{
     public void run() {
         for (BufferedImage next : images) {
             for (IImageProcessor processor : processors) {
-                processor.process(next);
+                processor.process(new Frame(next));
             }
             try {
                 thread.sleep(1000);
