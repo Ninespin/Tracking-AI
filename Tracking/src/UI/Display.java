@@ -34,12 +34,12 @@ public class Display extends JPanel{
     public void paintComponent(Graphics g){
         g = (Graphics2D) g;
         g.setColor(Color.black);
-        g.drawRect(0, 0, this.getWidth(), this.getHeight());
+        g.fillRect(0, 0, this.getWidth(), this.getHeight());
         if(frame != null){
             g.drawImage(frame,0,0,this.getWidth(),this.getHeight(),null);
         }else{
             g.setColor(Color.yellow);
-            g.drawString("There is no frame to draw", this.getWidth()/2 -6 , this.getHeight()/2 -6);
+            g.drawString("There is no frame to draw", this.getWidth()/2 -"There is no frame to draw".length()/2 , this.getHeight()/2 -6);
         }
         
     }
