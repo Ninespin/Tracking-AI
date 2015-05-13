@@ -10,13 +10,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 /**
  * Class used to write shapes is the disc, for saving purposes
@@ -52,7 +51,7 @@ public class ShapeWriter {
         outThread.start();
     }
     
-    public void print(Template tmp, String name){
+    public void save(Template tmp, String name){
         buffer.add(new PrintableObject(name, tmp));
         synchronized (buffer) {
             buffer.notifyAll();
@@ -66,7 +65,13 @@ public class ShapeWriter {
             File outFile = new File(directory, object.getName()+".bin");
             
             try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(outFile))){
-                out.writeObject(object.getO());
+                out.writeObject(object.getTemplate());
+            } catch (IOException ex) {
+                Logger.getLogger(ShapeWriter.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            try{
+                ImageIO.write(object.getTemplate().toImage(), "png", new File(directory,object.getName()+".png"));
             } catch (IOException ex) {
                 Logger.getLogger(ShapeWriter.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -76,18 +81,18 @@ public class ShapeWriter {
     
     private class PrintableObject{
         private String name;
-        private Object o;
+        private Template o;
 
-        public PrintableObject(String name, Object o) {
+        public PrintableObject(String name, Template t) {
             this.name = name;
-            this.o = o;
+            this.o = t;
         }
 
         public String getName() {
             return name;
         }
 
-        public Object getO() {
+        public Template getTemplate() {
             return o;
         }
     }

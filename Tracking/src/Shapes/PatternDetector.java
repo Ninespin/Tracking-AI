@@ -6,6 +6,7 @@
 package Shapes;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -35,7 +36,8 @@ public class PatternDetector {
             for(int x = 0; x < frame.getWidth();x++){
                 boolean isInExclude = false;//get if in excluded zone
                 for(Shape s : exclude){
-                    int trueX = s.getTruePos()[0],trueY = s.getTruePos()[1];
+                    int trueX = s.getTruePos().x,
+                            trueY = s.getTruePos().y;
                     if(new Rectangle(trueX,trueY,s.getWidth(),s.getHeight()).contains(x,y0)){
                         isInExclude = true;
                         break;
@@ -109,9 +111,7 @@ public class PatternDetector {
                 //write template    ---------------------------------------------------------------------------------------
             }
             
-            int[] truepos = new int[2];
-            truepos[0] = xMin;
-            truepos[1] = xMax;
+            Point truepos = new Point(xMin,xMax);
             detectedShapes.add(new Shape(t,truepos));
             
             detectShapes(detectedShapes);//call yourself until no more shapes

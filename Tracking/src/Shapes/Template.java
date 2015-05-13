@@ -17,14 +17,18 @@ public class Template  implements Serializable{
     private int width,height;
     
     
-    public Template(){}
+    public Template(){
+        width = 100;
+        height = 100;
+        template = new int[width][height];
+    }
     public Template(int[][] _t){
         template = _t;
         width= template[0].length;
         height = template.length;
     }
     
-    public void makeFromImage(BufferedImage _image){
+    public Template(BufferedImage _image){
         width = _image.getWidth();
         height = _image.getHeight();
         template = new int[height][width];
@@ -39,6 +43,17 @@ public class Template  implements Serializable{
     public int[][] getRawTemplate(){
         return template;
     }
+    
+    public BufferedImage toImage(){
+        BufferedImage bu = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        for (int i = 0; i < bu.getHeight(); i++) {
+            for (int j = 0; j < bu .getWidth(); j++) {
+                bu.setRGB(i, j, template[i][j]);
+            }
+        }
+        return bu;
+    }
+    
     public int getWidth(){
         return width;
     }

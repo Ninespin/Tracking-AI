@@ -5,38 +5,37 @@
  */
 package Shapes;
 
+import java.awt.Point;
+
 
 /**
  *
  * @author jeremi
  */
 public class Shape{
-    private int[] truePosition,center;
+    private Point truePosition,center;
     private Template template;
     private int width,height;
     
     public Shape(){}
-    public Shape(Template _t, int[] _truePos){
+    public Shape(Template _t, Point _truePos){
         template = _t;
         truePosition = _truePos;
         width = _t.getWidth();
         height = _t.getHeight();
-        center[0] = (int)(truePosition[0]/2);
-        center[1] = (int)(truePosition[1]/2);
+        center.x = (int)(truePosition.x/2);
+        center.y = (int)(truePosition.y/2);
     }
-    public Shape(Template _t, int[] _truePos, int _width, int _height){
-        template = _t;
-        truePosition = _truePos;
+    public Shape(Template _t,Point _truePos, int _width, int _height){
+        this(_t,_truePos);
         width = _width;
         height = _height;
-        center[0] = (int)(truePosition[0]/2);
-        center[1] = (int)(truePosition[1]/2);
     }
     
-    public int[] getTruePos(){
+    public Point getTruePos(){
         return truePosition;
     }
-    public int[] getCenter(){
+    public Point getCenter(){
         return center;
     }
     public Template getTemplate(){
@@ -49,10 +48,10 @@ public class Shape{
         return height;
     }
     
-    public void setTruePos(int[] _p){
+    public void setTruePos(Point _p){
         truePosition = _p;
     }
-    public void setCenter(int[] _p){
+    public void setCenter(Point _p){
         center = _p;
     }
     public void setTemplate(Template _t){
