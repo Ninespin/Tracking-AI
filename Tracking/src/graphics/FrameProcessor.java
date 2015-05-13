@@ -70,7 +70,7 @@ public class FrameProcessor implements IImageProcessor{
     }
 
     @Override
-    public void process(BufferedImage img) {
-        display.setFrame(applyFilter(img,filter));
+    public void process(Frame frame) {
+        display.setFrame(applyFilter(frame.getImage(),filter));
     }
 }
