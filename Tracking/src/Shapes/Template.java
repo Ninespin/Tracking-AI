@@ -20,6 +20,8 @@ public class Template  implements Serializable{
     public Template(){}
     public Template(int[][] _t){
         template = _t;
+        width= template[0].length;
+        height = template.length;
     }
     
     public void makeFromImage(BufferedImage _image){
