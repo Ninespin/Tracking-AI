@@ -135,4 +135,7 @@ public class PatternDetector {
     public ArrayList<Shape> getShapes(){
         return detectedShapes;
     }
+    public void addToShapes(Shape s){
+        detectedShapes.add(s);
+    }
 }
