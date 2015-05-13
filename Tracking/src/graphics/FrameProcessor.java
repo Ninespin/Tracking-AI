@@ -15,11 +15,10 @@ import java.awt.image.BufferedImage;
  */
 public class FrameProcessor implements IImageProcessor{
     private final Filter filter ;
-    private final BufferedImage frame;
+
     
-    public FrameProcessor(BufferedImage _frame,Filter _filter){
+    public FrameProcessor(Filter _filter){
         filter = _filter;
-        this.frame = _frame;
     }
     
     /*
