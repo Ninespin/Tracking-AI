@@ -5,10 +5,90 @@
  */
 package IO;
 
+import Shapes.Template;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
- *
- * @author jeremi
+ * Class used to write shapes is the disc, for saving purposes
+ * @author Arnaud & Jérémi
  */
 public class ShapeWriter {
     
+    private File directory;
+    private Thread outThread;
+    private boolean running;
+    
+    private final List<PrintableObject> buffer;
+    
+    public ShapeWriter(String directory){
+        this.directory = new File(directory);
+        buffer = new LinkedList<>();
+        running = true;
+        outThread = new Thread(()->{
+            while(running){
+                while(buffer.isEmpty()){
+                    try {
+                        synchronized (buffer) {
+                            buffer.wait();
+                        }
+                    } catch (InterruptedException ex) {}
+                }
+                writeAll();
+            }
+        },"Shape Writer Thread");
+    }
+    
+    public void start(){
+        outThread.start();
+    }
+    
+    public void print(Template tmp, String name){
+        buffer.add(new PrintableObject(name, tmp));
+        synchronized (buffer) {
+            buffer.notifyAll();
+        }
+    }
+    
+    private void writeAll(){
+        for (Iterator<PrintableObject> iterator = buffer.iterator(); iterator.hasNext();) {
+            PrintableObject object = iterator.next();
+            
+            File outFile = new File(directory, object.getName()+".bin");
+            
+            try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(outFile))){
+                out.writeObject(object.getO());
+            } catch (IOException ex) {
+                Logger.getLogger(ShapeWriter.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            iterator.remove();
+        }
+    }
+    
+    private class PrintableObject{
+        private String name;
+        private Object o;
+
+        public PrintableObject(String name, Object o) {
+            this.name = name;
+            this.o = o;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Object getO() {
+            return o;
+        }
+    }
 }

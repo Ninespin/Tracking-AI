@@ -5,7 +5,6 @@
  */
 package Shapes;
 
-import java.io.Serializable;
 
 /**
  *
