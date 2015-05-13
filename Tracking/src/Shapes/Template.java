@@ -5,6 +5,7 @@
  */
 package Shapes;
 
+import java.awt.image.BufferedImage;
 import java.io.Serializable;
 
 /**
@@ -13,9 +14,33 @@ import java.io.Serializable;
  */
 public class Template  implements Serializable{
     private int[][] template;
+    private int width,height;
     
     
-    private void toBufferedImage(){
+    public Template(){}
+    public Template(int[][] _t){
+        template = _t;
+    }
+    
+    public void makeFromImage(BufferedImage _image){
+        width = _image.getWidth();
+        height = _image.getHeight();
+        template = new int[height][width];
         
+        for(int i = 0 ; i < _image.getHeight();i++){
+            for(int j = 0; j < _image.getWidth();j++){
+                template[i][j] = _image.getRGB(i,j);
+            }
+        }
+    }
+    
+    public int[][] getRawTemplate(){
+        return template;
+    }
+    public int getWidth(){
+        return width;
+    }
+    public int getHeight(){
+        return height;
     }
 }
