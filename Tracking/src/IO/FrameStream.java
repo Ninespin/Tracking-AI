@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 /**
@@ -72,6 +74,11 @@ public class FrameStream implements Runnable{
         for (BufferedImage next : images) {
             for (IImageProcessor processor : processors) {
                 processor.process(next);
+            }
+            try {
+                thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(FrameStream.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

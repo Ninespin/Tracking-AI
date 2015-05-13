@@ -5,9 +5,13 @@
  */
 package UI;
 
+import IO.FrameStream;
+import graphics.Filter;
+import graphics.FrameProcessor;
+import java.awt.Color;
+import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import tracking.Tracking;
 
 /**
@@ -17,13 +21,14 @@ import tracking.Tracking;
 public class GUI extends javax.swing.JFrame {
 
     public static final String PATH_PREFIX = "Path :";
-    private String path = "";
+    private String path = "C:\\Users\\eloi\\Documents\\ArnaudDossiers\\Prog";
     
     /**
      * Creates new form GUI
      */
     public GUI() {
         initComponents();
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -35,40 +40,38 @@ public class GUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        display1 = new UI.Display();
-        display2 = new UI.Display();
-        jButton1 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
-        display3 = new UI.Display();
+        goButton = new javax.swing.JButton();
+        pathDisplay = new javax.swing.JLabel();
+        chooseButton = new javax.swing.JButton();
+        display = new UI.Display();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("GO!");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        goButton.setText("GO!");
+        goButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                goButtonActionPerformed(evt);
             }
         });
 
-        jLabel1.setText("Path :");
+        pathDisplay.setText("Path :");
 
-        jButton2.setText("Chose Path");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        chooseButton.setText("Chose Path");
+        chooseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                chooseButtonActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout display3Layout = new javax.swing.GroupLayout(display3);
-        display3.setLayout(display3Layout);
-        display3Layout.setHorizontalGroup(
-            display3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 200, Short.MAX_VALUE)
+        javax.swing.GroupLayout displayLayout = new javax.swing.GroupLayout(display);
+        display.setLayout(displayLayout);
+        displayLayout.setHorizontalGroup(
+            displayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
-        display3Layout.setVerticalGroup(
-            display3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 200, Short.MAX_VALUE)
+        displayLayout.setVerticalGroup(
+            displayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 249, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -78,45 +81,54 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(display, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(goButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2)
+                        .addComponent(chooseButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel1))
-                    .addComponent(display3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(190, Short.MAX_VALUE))
+                        .addComponent(pathDisplay)
+                        .addGap(0, 199, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jLabel1)
-                    .addComponent(jButton2))
+                    .addComponent(goButton)
+                    .addComponent(pathDisplay)
+                    .addComponent(chooseButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(display3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(60, Short.MAX_VALUE))
+                .addComponent(display, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
+        try {
+            FrameStream fs = new FrameStream(path);// <-- le path
+            Filter f = new Filter(Color.blue,70);
+            FrameProcessor fp = new FrameProcessor(f,display);
+            fs.setOutput(fp);
+            fs.start();
+        } catch (IOException ex) {
+            System.out.println("OOOOPs");
+        }
+    }//GEN-LAST:event_goButtonActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void chooseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseButtonActionPerformed
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int returnVal = chooser.showOpenDialog(this);
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             path = 
                 chooser.getSelectedFile().getPath();
-            jLabel1.setText(PATH_PREFIX+path);
+            pathDisplay.setText(PATH_PREFIX+path);
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_chooseButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -149,11 +161,9 @@ public class GUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private UI.Display display1;
-    private UI.Display display2;
-    private UI.Display display3;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JButton chooseButton;
+    private UI.Display display;
+    private javax.swing.JButton goButton;
+    private javax.swing.JLabel pathDisplay;
     // End of variables declaration//GEN-END:variables
 }

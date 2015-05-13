@@ -6,6 +6,7 @@
 package graphics;
 
 import IO.IImageProcessor;
+import UI.Display;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
@@ -15,10 +16,11 @@ import java.awt.image.BufferedImage;
  */
 public class FrameProcessor implements IImageProcessor{
     private final Filter filter ;
-
+    private final Display display;
     
-    public FrameProcessor(Filter _filter){
+    public FrameProcessor(Filter _filter,Display dis){
         filter = _filter;
+        display = dis;
     }
     
     /*
@@ -69,6 +71,6 @@ public class FrameProcessor implements IImageProcessor{
 
     @Override
     public void process(BufferedImage img) {
-        applyFilter(img,filter);
+        display.setFrame(applyFilter(img,filter));
     }
 }
