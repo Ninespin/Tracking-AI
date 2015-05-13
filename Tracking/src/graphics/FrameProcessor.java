@@ -5,6 +5,7 @@
  */
 package graphics;
 
+import IO.IImageProcessor;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
@@ -12,7 +13,7 @@ import java.awt.image.BufferedImage;
  *
  * @author jeremi
  */
-public class FrameProcessor{
+public class FrameProcessor implements IImageProcessor{
     private final Filter filter ;
     private final BufferedImage frame;
     
@@ -21,16 +22,16 @@ public class FrameProcessor{
         this.frame = _frame;
     }
     
-    public void applyFilter(Color _color, double precision,Color _highlightColor){
-        precision = (precision < 0)? 0 : (precision > 100)? 100 : precision;
-        int[] _colorComp = {_color.getRed(),_color.getGreen(),_color.getBlue()};
+    public BufferedImage applyFilter(BufferedImage frame, Filter filter){
+        int precision = (filter.getUncertainty() < 0)? 0 : (filter.getUncertainty() > 100)? 100 : filter.getUncertainty();
+        int[] _colorComp = {filter.getColor().getRed(),filter.getColor().getGreen(),filter.getColor().getBlue()};
         final int margin = (int)(precision*255/100);
         
-        /*filteredImage = new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_RGB);
+        BufferedImage filteredFrame = new BufferedImage(frame.getWidth(),frame.getHeight(),BufferedImage.TYPE_INT_RGB);
         
-        for(int y = 0; y < image.getHeight();y++){
-            for(int x = 0; x < image.getWidth();x++){
-                Color tc = new Color(image.getRGB(x, y));
+        for(int y = 0; y < frame.getHeight();y++){
+            for(int x = 0; x < frame.getWidth();x++){
+                Color tc = new Color(frame.getRGB(x, y));
                 int[] targetColor = {tc.getRed(),tc.getGreen(),tc.getBlue()};
                 
                 //filteredImage.setRGB(x,y,tc.getRed()<<16);
@@ -41,7 +42,7 @@ public class FrameProcessor{
                         && targetColor[1] >= ((_colorComp[1]-margin > 0)? _colorComp[1]-margin : 0))&&//green    
                         (targetColor[2] <= ((_colorComp[2]+margin < 255)? _colorComp[2]+margin : 255) 
                         && targetColor[2] >= ((_colorComp[2]-margin > 0)? _colorComp[2]-margin : 0))){//blue
-                    filteredImage.setRGB(x,y,_highlightColor.getRGB());
+                    filteredFrame.setRGB(x,y,Color.white.getRGB());
                 }/*
                 if(_colorComp[0] > _colorComp[1] && _colorComp[0] > _colorComp[2]){//all where red is higher
                     if(targetColor[0] > targetColor[1] && targetColor[0] > targetColor[2]){
@@ -56,9 +57,15 @@ public class FrameProcessor{
                     if(targetColor[0] < targetColor[1] && targetColor[1] > targetColor[2]){
                         filteredImage.setRGB(x,y,_highlightColor.getRGB());
                     }
-                }
+                }*/
             }
         }
-        generateCenterOfMass();*/
+        return filteredFrame;
+        
+    }
+
+    @Override
+    public void process(BufferedImage img) {
+        applyFilter(img,filter);
     }
 }
