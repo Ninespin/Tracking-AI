@@ -11,4 +11,11 @@ import java.io.Serializable;
  *
  * @author jeremi
  */
-public class Shape{}
+public class Template  implements Serializable{
+    private int[][] template;
+    
+    
+    private void toBufferedImage(){
+        
+    }
+}
