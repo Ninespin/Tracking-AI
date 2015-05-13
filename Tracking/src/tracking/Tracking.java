@@ -15,7 +15,7 @@ public class Tracking {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void init(String[] args) {
         try {
             FrameStream fs = new FrameStream("C:\\Users\\eloi\\Documents\\ArnaudDossiers\\Prog");// <-- le path
             Filter f = new Filter(Color.red,10);
