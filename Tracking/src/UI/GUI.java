@@ -113,7 +113,7 @@ public class GUI extends javax.swing.JFrame {
         int returnVal = chooser.showOpenDialog(this);
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             path = 
-                chooser.getSelectedFile().getName();
+                chooser.getSelectedFile().getPath();
             jLabel1.setText(PATH_PREFIX+path);
         }
     }//GEN-LAST:event_jButton2ActionPerformed

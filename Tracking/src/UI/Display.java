@@ -39,7 +39,7 @@ public class Display extends JPanel{
             g.drawImage(frame,0,0,this.getWidth(),this.getHeight(),null);
         }else{
             g.setColor(Color.yellow);
-            g.drawString("There is no frame to draw", this.getWidth()/2 -"There is no frame to draw".length()/2 , this.getHeight()/2 -6);
+            g.drawString("There is no frame to draw", this.getWidth()/2 -(g.getFontMetrics().stringWidth("There is no frame to draw"))/2 , this.getHeight()/2 -6);
         }
         
     }
