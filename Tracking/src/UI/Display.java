@@ -43,9 +43,15 @@ public class Display extends JPanel{
             /**/
             PatternDetector p = new PatternDetector(frame);
             if(p.detectShapes(null)){
-                for(Shape s : p.getShapes()){
+                for(int i = 0; i < p.getShapes().size();i++){
+                    Shape s = p.getShapes().get(i);
                     g.setColor(Color.red);
                     g.drawRect(s.getTruePos().x, s.getTruePos().y, s.getWidth(), s.getHeight());
+                    g.drawLine(s.getCenter().x-s.getWidth()/20,s.getCenter().y
+                            ,s.getCenter().x+s.getWidth()/20,s.getCenter().y);
+                    g.drawLine(s.getCenter().x, s.getCenter().y-s.getHeight()/20, 
+                            s.getCenter().x,  s.getCenter().y+s.getHeight()/20);
+                    g.drawString(""+i, s.getTruePos().x+5, s.getTruePos().y+10);
                 }
             }
             
