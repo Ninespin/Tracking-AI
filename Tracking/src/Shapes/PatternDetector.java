@@ -72,11 +72,13 @@ public class PatternDetector {
                 xMax++;
                 
                 if(y1Stop || yMax >= frame.getHeight()){yMax--;}
-                if(x0Stop || xMin < 0){xMin++;}
+                if(x0Stop){xMin++;}
+                if(xMin < 0){xMin = 0;}
                 if(x1Stop || xMax >= frame.getWidth()){xMax--;}
                 //System.out.println(xMin+" "+xMax+" "+yMin+" "+yMax+x0Stop+x1Stop+y1Stop);
                 if(!y1Stop||!x0Stop||!x1Stop){
                     int stillInTheShape = 0;
+                    //System.out.println(xMin);
                     for(int x = xMin; x < xMax;x++){
                         //System.out.println(x+" "+yMax);
                         if(frame.getRGB(x,yMax) == Color.white.getRGB())//AOOB
