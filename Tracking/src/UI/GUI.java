@@ -44,6 +44,7 @@ public class GUI extends javax.swing.JFrame {
         goButton = new javax.swing.JButton();
         pathDisplay = new javax.swing.JLabel();
         chooseButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
         display = new UI.Display();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -72,8 +73,10 @@ public class GUI extends javax.swing.JFrame {
         );
         displayLayout.setVerticalGroup(
             displayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 249, Short.MAX_VALUE)
+            .addGap(0, 327, Short.MAX_VALUE)
         );
+
+        jScrollPane1.setViewportView(display);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -82,14 +85,14 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(display, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(goButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(chooseButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pathDisplay)
-                        .addGap(0, 199, Short.MAX_VALUE)))
+                        .addGap(0, 431, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -101,7 +104,7 @@ public class GUI extends javax.swing.JFrame {
                     .addComponent(pathDisplay)
                     .addComponent(chooseButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(display, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -164,6 +167,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JButton chooseButton;
     private UI.Display display;
     private javax.swing.JButton goButton;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel pathDisplay;
     // End of variables declaration//GEN-END:variables
 }
