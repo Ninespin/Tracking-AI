@@ -71,41 +71,48 @@ public class PatternDetector {
                 xMin--;
                 xMax++;
                 
-                if(y1Stop){yMax--;}
-                if(x0Stop){xMin++;}
-                if(x1Stop){xMax--;}
+                if(y1Stop || yMax >= frame.getHeight()){yMax--;}
+                if(x0Stop || xMin < 0){xMin++;}
+                if(x1Stop || xMax >= frame.getWidth()){xMax--;}
                 //System.out.println(xMin+" "+xMax+" "+yMin+" "+yMax+x0Stop+x1Stop+y1Stop);
-                if(!y1Stop){
+                if(!y1Stop||!x0Stop||!x1Stop){
                     int stillInTheShape = 0;
                     for(int x = xMin; x < xMax;x++){
-                        System.out.println(x+" "+yMax);
-                        if(frame.getRGB(x,yMax) == Color.white.getRGB())//AOOB exception
+                        
+                        if(frame.getRGB(x,yMax) == Color.white.getRGB())
                             stillInTheShape++;
                     }   
                     if(stillInTheShape == 0 || yMax >= frame.getHeight()-1){
                         y1Stop = true;
+                    }else if(stillInTheShape != 0){
+                        y1Stop = false;
                     }
                 }
-                if(!x0Stop){
+                if(!x0Stop||!x1Stop||!y1Stop){
                     int stillInTheShape = 0;
                     for(int y = yMin; y < yMax;y++){
                         if(frame.getRGB(xMin,y) == Color.white.getRGB())
-                            stillInTheShape++;//find better way to see if is the end , if the slope is too pronouced, it fails
+                            stillInTheShape++;
                     }   
                     if(stillInTheShape == 0 || xMin <= 0){
                         System.out.println("stop at "+xMin);
                         x0Stop = true;
+                    }else if(stillInTheShape != 0){
+                        x0Stop = false;
                     }
                 }
-                if(!x1Stop){
+                if(!x1Stop||!x0Stop||!y1Stop){
+                    System.out.println(""+yMax+x0Stop+x1Stop+y1Stop);
                     int stillInTheShape = 0;
                     for(int y = yMin; y < yMax;y++){
                         if(frame.getRGB(xMax,y) == Color.white.getRGB())
                             stillInTheShape++;
                     }   
                     if(stillInTheShape == 0 || xMax >= frame.getWidth()-1){
-                        System.out.println("stop at_ "+xMax+" "+centerY[0]);
+                        System.out.println("stop at_ "+xMax);
                         x1Stop = true;
+                    }else if(stillInTheShape != 0){
+                        x1Stop = false;
                     }
                 }
             }while(!x0Stop || !x1Stop || !y1Stop);
