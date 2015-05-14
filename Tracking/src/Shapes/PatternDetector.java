@@ -23,10 +23,14 @@ public class PatternDetector {
     public PatternDetector(){}
     public PatternDetector(BufferedImage _frame){
         frame = _frame;
+        detectedShapes = new ArrayList<Shape>();
         
     }
     
     public boolean detectShapes(ArrayList<Shape> exclude){
+        if(exclude == null){
+            exclude = new ArrayList<Shape>();
+        }
         int[]centerY = {-1,-1};//x,y
         int xMax,xMin,yMax,yMin;
         boolean x0Stop = false, x1Stop = false,y1Stop = false;
@@ -56,54 +60,60 @@ public class PatternDetector {
             }
         }
         if(centerY[0] > -1 && centerY[1] > -1){
-            yMax = centerY[1];
-            yMin = yMax;
-            xMin = centerY[0];
-            xMax = xMin;
+            yMax = centerY[1]+1;
+            yMin = centerY[1];
+            xMin = centerY[0]-1;
+            xMax = xMin+2;
             //get all 3 other sides
             do{
+                
                 yMax++;
-                xMin++;
+                xMin--;
                 xMax++;
+                
+                if(y1Stop){yMax--;}
+                if(x0Stop){xMin++;}
+                if(x1Stop){xMax--;}
+                //System.out.println(xMin+" "+xMax+" "+yMin+" "+yMax+x0Stop+x1Stop+y1Stop);
                 if(!y1Stop){
-                    boolean stillInTheShape = true;
-                    for(int x = centerY[0]-xMin; x < centerY[0]+xMax;x++){
-                        if(frame.getRGB(x,yMax) == Color.white.getRGB())
-                            stillInTheShape = false;
+                    int stillInTheShape = 0;
+                    for(int x = xMin; x < xMax;x++){
+                        System.out.println(x+" "+yMax);
+                        if(frame.getRGB(x,yMax) == Color.white.getRGB())//AOOB exception
+                            stillInTheShape++;
                     }   
-                    if(!stillInTheShape)
+                    if(stillInTheShape == 0 || yMax >= frame.getHeight()-1){
                         y1Stop = true;
-                }else{
-                    yMax--;
+                    }
                 }
                 if(!x0Stop){
-                    boolean stillInTheShape = true;
-                    for(int y = centerY[1]-yMin; y < centerY[0];y++){
+                    int stillInTheShape = 0;
+                    for(int y = yMin; y < yMax;y++){
                         if(frame.getRGB(xMin,y) == Color.white.getRGB())
-                            stillInTheShape = false;
+                            stillInTheShape++;//find better way to see if is the end , if the slope is too pronouced, it fails
                     }   
-                    if(!stillInTheShape)
+                    if(stillInTheShape == 0 || xMin <= 0){
+                        System.out.println("stop at "+xMin);
                         x0Stop = true;
-                }else{
-                    xMin--;
+                    }
                 }
                 if(!x1Stop){
-                    boolean stillInTheShape = true;
-                    for(int y = centerY[1]; y < centerY[0]+yMax;y++){
+                    int stillInTheShape = 0;
+                    for(int y = yMin; y < yMax;y++){
                         if(frame.getRGB(xMax,y) == Color.white.getRGB())
-                            stillInTheShape = false;
+                            stillInTheShape++;
                     }   
-                    if(!stillInTheShape)
+                    if(stillInTheShape == 0 || xMax >= frame.getWidth()-1){
+                        System.out.println("stop at_ "+xMax+" "+centerY[0]);
                         x1Stop = true;
-                }else{
-                    xMax--;
+                    }
                 }
             }while(!x0Stop || !x1Stop || !y1Stop);
-            
+            System.out.println("shape at ("+xMin+","+yMin+") ("+xMax+","+yMax+")");
             int[][] templateVal = new int[yMax-yMin][xMax-xMin];//get the value of shape
             for(int i = yMin; i < yMax;i++){
                 for(int j = xMin; j < xMax;j++){
-                    templateVal[i][j] = frame.getRGB(xMin+j,yMin+i);
+                    templateVal[i-yMin][j-xMin] = frame.getRGB(j,i);
                 }
             }
             Template t = new Template(templateVal);
@@ -111,14 +121,14 @@ public class PatternDetector {
                 //write template    ---------------------------------------------------------------------------------------
             }
             
-            Point truepos = new Point(xMin,xMax);
+            Point truepos = new Point(xMin,yMin);
             detectedShapes.add(new Shape(t,truepos));
             
             detectShapes(detectedShapes);//call yourself until no more shapes
         }else{
             return true;
         }
-        System.out.println("There was a problem in PatterDetector.detectShapes: this line isnt supposed to be executed.");
+        //System.out.println("There was a problem in PatterDetector.detectShapes: this line isnt supposed to be executed.");
         return true;
     }
     

@@ -23,8 +23,7 @@ public class Shape{
         truePosition = _truePos;
         width = _t.getWidth();
         height = _t.getHeight();
-        center.x = (int)(truePosition.x/2);
-        center.y = (int)(truePosition.y/2);
+        center = new Point((int)(truePosition.getX()+width/2),(int)(truePosition.getY()+height/2));
     }
     public Shape(Template _t,Point _truePos, int _width, int _height){
         this(_t,_truePos);
