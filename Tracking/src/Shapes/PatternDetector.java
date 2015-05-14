@@ -45,7 +45,7 @@ public class PatternDetector {
                     } catch (InterruptedException ex) {
                     }
                 }
-                detectShapeResult = detectShape(exclude);
+                detectShapeResult = detectShape(exclude,0);
                 exclude = null;
             }
         }, "Shape Finder thread");
@@ -69,7 +69,7 @@ public class PatternDetector {
         }
     }
 
-    private boolean detectShape(ArrayList<Shape> exclude) {
+    private boolean detectShape(ArrayList<Shape> exclude,int startY) {
         if (exclude == null) {
             exclude = new ArrayList<Shape>();
         }
@@ -77,21 +77,23 @@ public class PatternDetector {
         int xMax, xMin, yMax, yMin;
         boolean x0Stop = false, x1Stop = false, y1Stop = false;
 
+        int xPos=0,yPos=0;
+        System.out.println("Looking...");
         //first encounter  ** missing -> check if point is in not exclude
-        for (int y0 = 0; y0 < frame.getHeight(); y0++) {
-            for (int x = 0; x < frame.getWidth(); x++) {
+        for (yPos = startY; yPos < frame.getHeight(); yPos++) {
+            for (xPos = 0; xPos < frame.getWidth(); xPos++) {
                 boolean isInExclude = false;//get if in excluded zone
                 for (Shape s : exclude) {
                     int trueX = s.getTruePos().x,
                             trueY = s.getTruePos().y;
-                    if (new Rectangle(trueX, trueY, s.getWidth(), s.getHeight()).contains(x, y0)) {
+                    if (new Rectangle(trueX, trueY, s.getWidth(), s.getHeight()).contains(xPos, yPos)) {
                         isInExclude = true;
                         break;
                     }
                 }
-                if (!isInExclude && frame.getRGB(x, y0) == Color.white.getRGB()) {//if not and white
-                    centerY[0] = x;
-                    centerY[1] = y0;
+                if (!isInExclude && frame.getRGB(xPos, yPos) == Color.white.getRGB()) {//if not and white
+                    centerY[0] = xPos;
+                    centerY[1] = yPos;
 
                     break;
 
@@ -101,6 +103,7 @@ public class PatternDetector {
                 break;
             }
         }
+        System.out.println("Found!");
         if (centerY[0] > -1 && centerY[1] > -1) {
             yMax = centerY[1] + 1;
             yMin = centerY[1];
@@ -187,7 +190,7 @@ public class PatternDetector {
             Point truepos = new Point(xMin, yMin);
             detectedShapes.add(new Shape(t, truepos));
 
-            detectShape(detectedShapes);//call yourself until no more shapes
+            detectShape(detectedShapes,yPos);//call yourself until no more shapes
         } else {
             return true;
         }
