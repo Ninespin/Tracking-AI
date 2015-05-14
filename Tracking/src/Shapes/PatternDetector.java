@@ -78,8 +78,8 @@ public class PatternDetector {
                 if(!y1Stop||!x0Stop||!x1Stop){
                     int stillInTheShape = 0;
                     for(int x = xMin; x < xMax;x++){
-                        
-                        if(frame.getRGB(x,yMax) == Color.white.getRGB())
+                        //System.out.println(x+" "+yMax);
+                        if(frame.getRGB(x,yMax) == Color.white.getRGB())//AOOB
                             stillInTheShape++;
                     }   
                     if(stillInTheShape == 0 || yMax >= frame.getHeight()-1){
@@ -95,21 +95,21 @@ public class PatternDetector {
                             stillInTheShape++;
                     }   
                     if(stillInTheShape == 0 || xMin <= 0){
-                        System.out.println("stop at "+xMin);
+                       // System.out.println("stop at "+xMin);
                         x0Stop = true;
                     }else if(stillInTheShape != 0){
                         x0Stop = false;
                     }
                 }
                 if(!x1Stop||!x0Stop||!y1Stop){
-                    System.out.println(""+yMax+x0Stop+x1Stop+y1Stop);
+                    //System.out.println(""+yMax+x0Stop+x1Stop+y1Stop);
                     int stillInTheShape = 0;
                     for(int y = yMin; y < yMax;y++){
                         if(frame.getRGB(xMax,y) == Color.white.getRGB())
                             stillInTheShape++;
                     }   
                     if(stillInTheShape == 0 || xMax >= frame.getWidth()-1){
-                        System.out.println("stop at_ "+xMax);
+                        //System.out.println("stop at_ "+xMax);
                         x1Stop = true;
                     }else if(stillInTheShape != 0){
                         x1Stop = false;
