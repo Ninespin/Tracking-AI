@@ -41,6 +41,9 @@ public class PatternDetector {
             while (running) {
                 synchronized (mainThread) {
                     try {
+                        synchronized(this){
+                            this.notifyAll();
+                        }
                         mainThread.wait();
                     } catch (InterruptedException ex) {
                     }
@@ -50,6 +53,11 @@ public class PatternDetector {
             }
         }, "Shape Finder thread");
         mainThread.start();
+        synchronized(this){
+            try {
+                this.wait();
+            } catch (InterruptedException ex) {}
+        }
     }
     
     public void stop(){

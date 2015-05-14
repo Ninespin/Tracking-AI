@@ -21,7 +21,7 @@ import javax.imageio.ImageIO;
  */
 public class FrameStream implements Runnable{
     
-    private static final String IMAGE_EXCTENTION = ".jpg";
+    private static final String IMAGE_EXCTENTION = ".png";
     
     private List<BufferedImage> images;
     private List<IImageProcessor> processors;
@@ -76,7 +76,7 @@ public class FrameStream implements Runnable{
                 processor.process(new Frame(next));
             }
             try {
-                thread.sleep(1000);
+                thread.sleep(5000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(FrameStream.class.getName()).log(Level.SEVERE, null, ex);
             }
