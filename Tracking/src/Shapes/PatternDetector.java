@@ -134,7 +134,7 @@ public class PatternDetector {
                     //System.out.println(xMin);
                     for (int x = xMin; x < xMax; x++) {
                         //System.out.println(x+" "+yMax);
-                        if (frame.getRGB(x, yMax) == Color.white.getRGB())//AOOB
+                        if (frame.getRGB(x, yMax-1) == Color.white.getRGB())//AOOB
                         {
                             stillInTheShape++;
                         }
@@ -163,7 +163,7 @@ public class PatternDetector {
                     //System.out.println(""+yMax+x0Stop+x1Stop+y1Stop);
                     int stillInTheShape = 0;
                     for (int y = yMin; y < yMax; y++) {
-                        if (frame.getRGB(xMax, y) == Color.white.getRGB()) {
+                        if (frame.getRGB(xMax-1, y) == Color.white.getRGB()) {
                             stillInTheShape++;
                         }
                     }
