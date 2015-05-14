@@ -19,9 +19,12 @@ public class PatternDetector {
     private ArrayList<Shape> detectedShapes;
     private BufferedImage frame;
     private final int ERROR_MARGIN = 25;//in %
-    
+    private final int SMALLSHAPE_FACTOR = 100000;
+    private ArrayList<Shape> discarded;
+
     public PatternDetector(){}
     public PatternDetector(BufferedImage _frame){
+
         frame = _frame;
         detectedShapes = new ArrayList<Shape>();
         
@@ -31,15 +34,33 @@ public class PatternDetector {
         if(exclude == null){
             exclude = new ArrayList<Shape>();
         }
-        int[]centerY = {-1,-1};//x,y
-        int xMax,xMin,yMax,yMin;
-        boolean x0Stop = false, x1Stop = false,y1Stop = false;
-        
+
+        if (discarded == null) {
+            discarded = new ArrayList<Shape>();
+        }
+        int[] centerY = {-1, -1};//x,y
+        int xMax, xMin, yMax, yMin;
+        boolean x0Stop = false, x1Stop = false, y1Stop = false;
+
+        int xPos=0,yPos=0;
+        System.out.println("Looking...");
+
+
         //first encounter  ** missing -> check if point is in not exclude
         for(int y0 = 0; y0 < frame.getHeight();y0++){
             for(int x = 0; x < frame.getWidth();x++){
                 boolean isInExclude = false;//get if in excluded zone
-                for(Shape s : exclude){
+
+                for (Shape s : exclude) {
+                    int trueX = s.getTruePos().x,
+                            trueY = s.getTruePos().y;
+                    if (new Rectangle(trueX, trueY, s.getWidth(), s.getHeight()).contains(xPos, yPos)) {
+                        isInExclude = true;
+                        break;
+                    }
+                }
+                for (Shape s : discarded) {
+
                     int trueX = s.getTruePos().x,
                             trueY = s.getTruePos().y;
                     if(new Rectangle(trueX,trueY,s.getWidth(),s.getHeight()).contains(x,y0)){
@@ -129,12 +150,19 @@ public class PatternDetector {
             if(this.checkIfTemplateExists(t,ERROR_MARGIN)){
                 //write template    ---------------------------------------------------------------------------------------
             }
+
+
+            Point truepos = new Point(xMin, yMin);
             
-            Point truepos = new Point(xMin,yMin);
-            detectedShapes.add(new Shape(t,truepos));
-            
+            Shape s = new Shape(t, truepos);
+            if(s.getWidth()*s.getHeight() > frame.getHeight()*frame.getWidth()/SMALLSHAPE_FACTOR){
+                detectedShapes.add(s);
+            }else{
+                discarded.add(s);
+            }
             detectShapes(detectedShapes);//call yourself until no more shapes
-        }else{
+        } else {
+
             return true;
         }
         //System.out.println("There was a problem in PatterDetector.detectShapes: this line isnt supposed to be executed.");
@@ -156,5 +184,12 @@ public class PatternDetector {
     }
     public void addToShapes(Shape s){
         detectedShapes.add(s);
+    }
+    public ArrayList<Shape> getDiscarded() {
+        return discarded;
+    }
+
+    public void addToDiscarded(Shape s) {
+        discarded.add(s);
     }
 }
