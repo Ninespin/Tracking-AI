@@ -114,7 +114,7 @@ public class GUI extends javax.swing.JFrame {
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
         try {
             FrameStream fs = new FrameStream(path);// <-- le path
-            Filter f = new Filter(Color.blue,70);
+            Filter f = new Filter(Color.red,70);
             FrameProcessor fp = new FrameProcessor(f,display);
             fs.setOutput(fp);
             fs.start();
