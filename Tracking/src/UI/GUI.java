@@ -73,7 +73,7 @@ public class GUI extends javax.swing.JFrame {
         );
         displayLayout.setVerticalGroup(
             displayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 327, Short.MAX_VALUE)
+            .addGap(0, 348, Short.MAX_VALUE)
         );
 
         jScrollPane1.setViewportView(display);
@@ -85,15 +85,14 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 464, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(goButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(chooseButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pathDisplay)
-                        .addGap(0, 431, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(pathDisplay)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -104,7 +103,7 @@ public class GUI extends javax.swing.JFrame {
                     .addComponent(pathDisplay)
                     .addComponent(chooseButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -114,7 +113,7 @@ public class GUI extends javax.swing.JFrame {
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
         try {
             FrameStream fs = new FrameStream(path);// <-- le path
-            Filter f = new Filter(Color.red,40);
+            Filter f = new Filter(Color.red,45);
             FrameProcessor fp = new FrameProcessor(f,display);
             fs.setOutput(fp);
             fs.start();

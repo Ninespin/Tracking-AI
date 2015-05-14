@@ -104,7 +104,7 @@ public class PatternDetector {
                     }
                 }
                 if(!x1Stop||!x0Stop||!y1Stop){
-                    //System.out.println(""+yMax+x0Stop+x1Stop+y1Stop);
+                    //System.out.println(yMin+" "+xMax);
                     int stillInTheShape = 0;
                     for(int y = yMin; y < yMax;y++){
                         if(frame.getRGB(xMax,y) == Color.white.getRGB())
@@ -118,7 +118,7 @@ public class PatternDetector {
                     }
                 }
             }while(!x0Stop || !x1Stop || !y1Stop);
-            System.out.println("shape at ("+xMin+","+yMin+") ("+xMax+","+yMax+")");
+            //System.out.println("shape at ("+xMin+","+yMin+") ("+xMax+","+yMax+")");
             int[][] templateVal = new int[yMax-yMin][xMax-xMin];//get the value of shape
             for(int i = yMin; i < yMax;i++){
                 for(int j = xMin; j < xMax;j++){
