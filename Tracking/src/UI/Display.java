@@ -60,7 +60,8 @@ public class Display extends JPanel implements Scrollable{
         if(p!= null)
             p.stop();
         p = new PatternDetector(frame);
-        p.detectShapes(null);
+        p.detectShapes(null); 
+        invalidate();
         repaint();
     }
 

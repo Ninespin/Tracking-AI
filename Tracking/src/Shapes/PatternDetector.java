@@ -22,7 +22,7 @@ public class PatternDetector {
     private ArrayList<Shape> detectedShapes;
     private BufferedImage frame;
     private final int ERROR_MARGIN = 25;//in %
-    private final int SMALLSHAPE_FACTOR = 100000;
+    private final int SMALLSHAPE_FACTOR = 100001;
 
     private ArrayList<Shape> exclude,discarded;
     private boolean detectShapeResult = true;
@@ -96,6 +96,14 @@ public class PatternDetector {
             for (xPos = 0; xPos < frame.getWidth(); xPos++) {
                 boolean isInExclude = false;//get if in excluded zone
                 for (Shape s : exclude) {
+                    int trueX = s.getTruePos().x,
+                            trueY = s.getTruePos().y;
+                    if (new Rectangle(trueX, trueY, s.getWidth(), s.getHeight()).contains(xPos, yPos)) {
+                        isInExclude = true;
+                        break;
+                    }
+                }
+                for (Shape s : discarded) {
                     int trueX = s.getTruePos().x,
                             trueY = s.getTruePos().y;
                     if (new Rectangle(trueX, trueY, s.getWidth(), s.getHeight()).contains(xPos, yPos)) {
