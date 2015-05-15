@@ -10,12 +10,11 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 
 /**
  *
- * @author jeremi
+ * @author Jérémi Cyr & Arnaud Paré-Vogt
  */
 public class PatternDetector {
 
@@ -31,12 +30,19 @@ public class PatternDetector {
     private Thread mainThread;
     private boolean running = true;
 
+    /**
+     * Creates a new PatternDetector, used to detect patterns (duh) in a given <code>BufferedImage</code>. The pattens are named <code>Template</code> and the detected pattens <code>Shape</code>.
+     * @param _frame The BufferedImage in whitch detect the patterns 
+     */
     public PatternDetector(BufferedImage _frame) {
         frame = _frame;
         detectedShapes = new ArrayList<Shape>();
         initThreads();
     }
 
+    /**
+     * Used by the constructor to initialyse the threads that are used to detect the patterns.
+     */
     private void initThreads() {
         mainThread = new Thread(() -> {
             while (running) {
@@ -49,8 +55,10 @@ public class PatternDetector {
                     } catch (InterruptedException ex) {
                     }
                 }
-                detectShapeResult = detectShape(exclude,0);
-                exclude = null;
+                if(running){
+                    detectShapeResult = detectShape(exclude,0);
+                    exclude = null;
+                }
             }
         }, "Shape Finder thread");
         mainThread.start();
@@ -61,10 +69,21 @@ public class PatternDetector {
         }
     }
     
+    /**
+     * Stops the thread. Useful when you dump the object.
+     */
     public void stop(){
         running = false;
+        synchronized (mainThread) {
+            mainThread.notifyAll();
+        }
     }
 
+    /**
+     * Activates a dedicated thread to detect Templates and Shapes in the image of the <code>PatternDetector</code>
+     * @param exclude An <code>ArrayList</code> of shapes that may be excluded from the search
+     * @return if the current thread is already working on detecting the shapes
+     */
     public boolean detectShapes(ArrayList<Shape> exclude) {
         if (detecting) {
             return true;
@@ -78,6 +97,13 @@ public class PatternDetector {
         }
     }
 
+    /**
+     * Detects the shapes in the frame on this object
+     * @param exclude the shapes to exclude
+     * @param startY the current y coordinate (this method is recursive)
+     * @return i do not honestly know, and i don't think it matters much
+     */
+    //TODO clean the massive code and fragment it for redability. Seriously, it is more than 100 lines long!
     private boolean detectShape(ArrayList<Shape> exclude,int startY) {
         if (exclude == null) {
             exclude = new ArrayList<Shape>();
@@ -224,27 +250,46 @@ public class PatternDetector {
         return true;
     }
 
+    /**
+     * Checks all already saved templates to see if _template matches at errorMargin % of error margin --------------------
+     * scale the biggest template of the 2 to the size of the smallest before compare
+     * if match, return true, else return false(and possibly write a new template accordingly)
+     * @deprecated not implemented yet
+     */
+    @Deprecated
     public boolean checkIfTemplateExists(Template _template, int errorMargin) {
-        /*
-         checks all already saved templates to see if _template matches at errorMargin % of error margin --------------------
-         scale the biggest template of the 2 to the size of the smallest before compare
-         if match, return true, else return false(and possibly write a new template accordingly)
-         */
+        
 
         return false;
     }
 
-    public ArrayList<Shape> getShapes() {
+    /**
+     * Returns all the shapes that have been found by the detector. Due to the multi-threaded nature of the process, finding all the shapes is not guarentied.
+     * @return an <code>List</code> of <code>Shapes</code> that are currently found.
+     */
+    public List<Shape> getShapes() {
         return detectedShapes;
     }
 
+    /**
+     * Adds che given <code>Shape</code> to the current list of detected shapes
+     * @param s the shape to be added
+     */
     public void addToShapes(Shape s) {
         detectedShapes.add(s);
     }
-    public ArrayList<Shape> getDiscarded() {
+    /**
+     * Returns the shapes that have been discarded, bue to their size. The shapes are likely to be some sort of interference.
+     * @return an <code>List</code> of <code>Shapes</code> that have been ignored
+     */
+    public List<Shape> getDiscarded() {
         return discarded;
     }
 
+    /**
+     * Adds the shape <code>s</code> to the list of discarded shapes.
+     * @param s 
+     */
     public void addToDiscarded(Shape s) {
         discarded.add(s);
     }
