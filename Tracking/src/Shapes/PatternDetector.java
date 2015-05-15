@@ -82,6 +82,9 @@ public class PatternDetector {
         if (exclude == null) {
             exclude = new ArrayList<Shape>();
         }
+        if (discarded == null) {
+            discarded = new ArrayList<Shape>();
+        }
         int[] centerY = {-1, -1};//x,y
         int xMax, xMin, yMax, yMin;
         boolean x0Stop = false, x1Stop = false, y1Stop = false;
