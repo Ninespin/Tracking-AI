@@ -22,8 +22,9 @@ public class PatternDetector {
     private ArrayList<Shape> detectedShapes;
     private BufferedImage frame;
     private final int ERROR_MARGIN = 25;//in %
+    private final int SMALLSHAPE_FACTOR = 100001;
 
-    private ArrayList<Shape> exclude;
+    private ArrayList<Shape> exclude,discarded;
     private boolean detectShapeResult = true;
     private boolean detecting = false;
 
@@ -81,6 +82,9 @@ public class PatternDetector {
         if (exclude == null) {
             exclude = new ArrayList<Shape>();
         }
+        if (discarded == null) {
+            discarded = new ArrayList<Shape>();
+        }
         int[] centerY = {-1, -1};//x,y
         int xMax, xMin, yMax, yMin;
         boolean x0Stop = false, x1Stop = false, y1Stop = false;
@@ -92,6 +96,14 @@ public class PatternDetector {
             for (xPos = 0; xPos < frame.getWidth(); xPos++) {
                 boolean isInExclude = false;//get if in excluded zone
                 for (Shape s : exclude) {
+                    int trueX = s.getTruePos().x,
+                            trueY = s.getTruePos().y;
+                    if (new Rectangle(trueX, trueY, s.getWidth(), s.getHeight()).contains(xPos, yPos)) {
+                        isInExclude = true;
+                        break;
+                    }
+                }
+                for (Shape s : discarded) {
                     int trueX = s.getTruePos().x,
                             trueY = s.getTruePos().y;
                     if (new Rectangle(trueX, trueY, s.getWidth(), s.getHeight()).contains(xPos, yPos)) {
@@ -196,7 +208,13 @@ public class PatternDetector {
             }
 
             Point truepos = new Point(xMin, yMin);
-            detectedShapes.add(new Shape(t, truepos));
+            Shape s = new Shape(t, truepos);
+            if(s.getWidth()*s.getHeight() > frame.getWidth()*frame.getHeight()/SMALLSHAPE_FACTOR){
+                detectedShapes.add(s);
+            }else{
+                discarded.add(s);
+            }
+            
 
             detectShape(detectedShapes,yPos);//call yourself until no more shapes
         } else {
@@ -222,5 +240,12 @@ public class PatternDetector {
 
     public void addToShapes(Shape s) {
         detectedShapes.add(s);
+    }
+    public ArrayList<Shape> getDiscarded() {
+        return discarded;
+    }
+
+    public void addToDiscarded(Shape s) {
+        discarded.add(s);
     }
 }

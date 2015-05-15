@@ -73,7 +73,7 @@ public class GUI extends javax.swing.JFrame {
         );
         displayLayout.setVerticalGroup(
             displayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 327, Short.MAX_VALUE)
+            .addGap(0, 348, Short.MAX_VALUE)
         );
 
         jScrollPane1.setViewportView(display);
@@ -114,7 +114,7 @@ public class GUI extends javax.swing.JFrame {
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
         try {
             FrameStream fs = new FrameStream(path);// <-- le path
-            Filter f = new Filter(Color.red,70);
+            Filter f = new Filter(Color.red,30);
             FrameProcessor fp = new FrameProcessor(f,display);
             fs.setOutput(fp);
             fs.start();
