@@ -5,6 +5,7 @@
  */
 package Shapes;
 
+import graphics.Frame;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -19,7 +20,7 @@ import java.util.List;
 public class PatternDetector {
 
     private ArrayList<Shape> detectedShapes;
-    private BufferedImage frame;
+    private Frame frame;
     private final int ERROR_MARGIN = 25;//in %
     private final int SMALLSHAPE_FACTOR = 100001;
 
@@ -34,7 +35,7 @@ public class PatternDetector {
      * Creates a new PatternDetector, used to detect patterns (duh) in a given <code>BufferedImage</code>. The pattens are named <code>Template</code> and the detected pattens <code>Shape</code>.
      * @param _frame The BufferedImage in whitch detect the patterns 
      */
-    public PatternDetector(BufferedImage _frame) {
+    public PatternDetector(Frame _frame) {
         frame = _frame;
         detectedShapes = new ArrayList<Shape>();
         initThreads();
@@ -118,8 +119,8 @@ public class PatternDetector {
         int xPos=0,yPos=0;
         System.out.println("Looking...");
         //first encounter  ** missing -> check if point is in not exclude
-        for (yPos = startY; yPos < frame.getHeight(); yPos++) {
-            for (xPos = 0; xPos < frame.getWidth(); xPos++) {
+        for (yPos = startY; yPos < frame.getImage().getHeight(); yPos++) {
+            for (xPos = 0; xPos < frame.getImage().getWidth(); xPos++) {
                 boolean isInExclude = false;//get if in excluded zone
                 for (Shape s : exclude) {
                     int trueX = s.getTruePos().x,
@@ -137,7 +138,7 @@ public class PatternDetector {
                         break;
                     }
                 }
-                if (!isInExclude && frame.getRGB(xPos, yPos) == Color.white.getRGB()) {//if not and white
+                if (!isInExclude && frame.getImage().getRGB(xPos, yPos) == Color.white.getRGB()) {//if not and white
                     centerY[0] = xPos;
                     centerY[1] = yPos;
 
@@ -162,7 +163,7 @@ public class PatternDetector {
                 xMin--;
                 xMax++;
 
-                if (y1Stop || yMax >= frame.getHeight()) {
+                if (y1Stop || yMax >= frame.getImage().getHeight()) {
                     yMax--;
                 }
                 if (x0Stop) {
@@ -171,7 +172,7 @@ public class PatternDetector {
                 if (xMin < 0) {
                     xMin = 0;
                 }
-                if (x1Stop || xMax >= frame.getWidth()) {
+                if (x1Stop || xMax >= frame.getImage().getWidth()) {
                     xMax--;
                 }
                 //System.out.println(xMin+" "+xMax+" "+yMin+" "+yMax+x0Stop+x1Stop+y1Stop);
@@ -180,12 +181,12 @@ public class PatternDetector {
                     //System.out.println(xMin);
                     for (int x = xMin; x < xMax; x++) {
                         //System.out.println(x+" "+yMax);
-                        if (frame.getRGB(x, yMax-1) == Color.white.getRGB())//AOOB
+                        if (frame.getImage().getRGB(x, yMax-1) == Color.white.getRGB())//AOOB
                         {
                             stillInTheShape++;
                         }
                     }
-                    if (stillInTheShape == 0 || yMax >= frame.getHeight() - 1) {
+                    if (stillInTheShape == 0 || yMax >= frame.getImage().getHeight() - 1) {
                         y1Stop = true;
                     } else if (stillInTheShape != 0) {
                         y1Stop = false;
@@ -194,7 +195,7 @@ public class PatternDetector {
                 if (!x0Stop || !x1Stop || !y1Stop) {
                     int stillInTheShape = 0;
                     for (int y = yMin; y < yMax; y++) {
-                        if (frame.getRGB(xMin, y) == Color.white.getRGB()) {
+                        if (frame.getImage().getRGB(xMin, y) == Color.white.getRGB()) {
                             stillInTheShape++;
                         }
                     }
@@ -209,11 +210,11 @@ public class PatternDetector {
                     //System.out.println(""+yMax+x0Stop+x1Stop+y1Stop);
                     int stillInTheShape = 0;
                     for (int y = yMin; y < yMax; y++) {
-                        if (frame.getRGB(xMax-1, y) == Color.white.getRGB()) {
+                        if (frame.getImage().getRGB(xMax-1, y) == Color.white.getRGB()) {
                             stillInTheShape++;
                         }
                     }
-                    if (stillInTheShape == 0 || xMax >= frame.getWidth() - 1) {
+                    if (stillInTheShape == 0 || xMax >= frame.getImage().getWidth() - 1) {
                         //System.out.println("stop at_ "+xMax);
                         x1Stop = true;
                     } else if (stillInTheShape != 0) {
@@ -225,7 +226,7 @@ public class PatternDetector {
             int[][] templateVal = new int[yMax - yMin][xMax - xMin];//get the value of shape
             for (int i = yMin; i < yMax; i++) {
                 for (int j = xMin; j < xMax; j++) {
-                    templateVal[i - yMin][j - xMin] = frame.getRGB(j, i);
+                    templateVal[i - yMin][j - xMin] = frame.getImage().getRGB(j, i);
                 }
             }
             Template t = new Template(templateVal);
@@ -235,8 +236,9 @@ public class PatternDetector {
 
             Point truepos = new Point(xMin, yMin);
             Shape s = new Shape(t, truepos);
-            if(s.getWidth()*s.getHeight() > frame.getWidth()*frame.getHeight()/SMALLSHAPE_FACTOR){
+            if(s.getWidth()*s.getHeight() > frame.getImage().getWidth()*frame.getImage().getHeight()/SMALLSHAPE_FACTOR){
                 detectedShapes.add(s);
+                frame.addShapes(s);
             }else{
                 discarded.add(s);
             }
@@ -272,11 +274,12 @@ public class PatternDetector {
     }
 
     /**
-     * Adds che given <code>Shape</code> to the current list of detected shapes
+     * Adds the given <code>Shape</code> to the current list of detected shapes
      * @param s the shape to be added
      */
     public void addToShapes(Shape s) {
         detectedShapes.add(s);
+        frame.addShapes(s);
     }
     /**
      * Returns the shapes that have been discarded, bue to their size. The shapes are likely to be some sort of interference.

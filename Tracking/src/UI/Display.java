@@ -7,6 +7,7 @@ package UI;
 
 import Shapes.PatternDetector;
 import Shapes.Shape;
+import graphics.Frame;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -55,11 +56,11 @@ public class Display extends JPanel implements Scrollable{
         repaint();
     }
 
-    public void setFrame(BufferedImage _frame) {
-        frame = _frame;
+    public void setFrame(Frame _frame) {
+        frame = _frame.getImage();
         if(p!= null)
             p.stop();
-        p = new PatternDetector(frame);
+        p = new PatternDetector(_frame);
         p.detectShapes(null); 
         invalidate();
         repaint();

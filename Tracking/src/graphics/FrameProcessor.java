@@ -71,6 +71,6 @@ public class FrameProcessor implements IImageProcessor{
 
     @Override
     public void process(Frame frame) {
-        display.setFrame(applyFilter(frame.getImage(),filter));
+        display.setFrame(new Frame (applyFilter(frame.getImage(),filter)));
     }
 }
