@@ -76,7 +76,7 @@ public class FrameStream implements Runnable{
                 processor.process(new Frame(next));
             }
             try {
-                thread.sleep(1000);
+                thread.sleep(5000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(FrameStream.class.getName()).log(Level.SEVERE, null, ex);
             }
