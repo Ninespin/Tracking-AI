@@ -40,7 +40,7 @@ public class Display extends JPanel implements Scrollable{
     
     public Display() {
         try{
-            Template temp = new Template(ImageIO.read(new File("C:\\Users\\jérémi\\Desktop\\template.png")));
+            Template temp = new Template(ImageIO.read(new File("C:\\Users\\eloi\\Documents\\ArnaudDossiers\\Prog\\Templates\\temp.jpg")));
             t = new Tracking(temp);
         }catch(Exception e){}
         
@@ -58,6 +58,7 @@ public class Display extends JPanel implements Scrollable{
     }
 
     public void start() {
+        if(th.getState()== Thread.State.NEW)
         th.start();
     }
 
