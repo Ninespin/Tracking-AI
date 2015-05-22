@@ -97,9 +97,10 @@ public class Display extends JPanel implements Scrollable{
             
             /*TRACKING TEST*/
             try{
-                Template temp = new Template(ImageIO.read(new File("C:\\Users\\jérémi\\Desktop\\b.png")));
+                Template temp = new Template(ImageIO.read(new File("C:\\Users\\jérémi\\Desktop\\template.png")));
                 Tracking t = new Tracking(temp);
                 t.setLastFrame(frame);
+                t.setFirstFrame(frame);
                 Shape match = t.getHighestMatch();
                 g.setColor(Color.green);
                 g.drawRect(match.getTruePos().x, match.getTruePos().y, match.getWidth(), match.getHeight());
