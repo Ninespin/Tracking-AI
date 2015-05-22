@@ -45,10 +45,21 @@ public class Template  implements Serializable{
     }
     
     public BufferedImage toImage(){
-        BufferedImage bu = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        for (int i = 0; i < bu.getHeight(); i++) {
-            for (int j = 0; j < bu .getWidth(); j++) {
-                bu.setRGB(i, j, template[i][j]);
+        BufferedImage bu = new BufferedImage(template[0].length, template.length, BufferedImage.TYPE_INT_RGB);
+        for (int i = 0; i < template.length; i++) {
+            for (int j = 0; j < template[0].length; j++) {
+                try{
+                    
+                    
+                    bu.setRGB(j, i, template[i][j]); //bu seems not to be the right size... out of bounds is on bu
+                    
+                }catch(Exception e){
+                    System.out.println("bu "+bu.getWidth()+"."+template[0].length+","+bu.getHeight()+"."+template.length);
+                    System.out.println("("+j+"."+i+
+                        ") is out of bounds, it shouldnt have been reached infirst place.(Template.java.toImage())");
+                e.printStackTrace();
+                }
+                
             }
         }
         return bu;
