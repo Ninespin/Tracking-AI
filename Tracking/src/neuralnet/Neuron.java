@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Eloi.
+ * Copyright 2015 Arnaud Paré-Vogt & Jérémi Cyr.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,10 +23,36 @@
  */
 package neuralnet;
 
+import java.util.List;
+import math.Function;
+
 /**
  *
- * @author Eloi
+ * @author Arnaud
  */
 public class Neuron {
     
+    private List<Synapse> out;
+    private Function activationFunction;
+    
+    private double currentIn;
+
+    public Neuron(List<Synapse> out,Function activationFunction) {
+        this.out = out;
+        this.activationFunction = activationFunction;
+    }
+    
+    public void clear(){
+        currentIn = 0;
+    }
+    
+    public void addToValue(double value){
+        currentIn += value;
+    }
+    
+    public void send(){
+        for (Synapse out1 : out) {
+            out1.carry(activationFunction.f(currentIn));
+        }
+    }
 }

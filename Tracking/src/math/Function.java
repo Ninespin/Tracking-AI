@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Arnaud Paré-Vogt & Jérémi Cyr.
+ * Copyright 2015 Eloi.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,18 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package neuralnet;
-
-import java.util.List;
+package math;
 
 /**
  *
- * @author Arnaud Paré-Vogt
+ * @author Eloi
  */
-public class NeuralNet {
+public interface Function {
     
-    List<List<Neuron>> layers;
+    public static Function sigmoid = (x)->{
+        return 1.0/(1-Math.pow(Math.E, -x));
+    };
     
-    
-    
+    abstract double f(double x);
 }

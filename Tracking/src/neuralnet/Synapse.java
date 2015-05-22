@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Eloi.
+ * Copyright 2015 Arnaud Paré-Vogt & Jérémi Cyr.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,8 +25,24 @@ package neuralnet;
 
 /**
  *
- * @author Eloi
+ * @author Arnaud
  */
 public class Synapse {
+    
+    private double weight;
+    private Neuron to;
+
+    public Synapse(double weight, Neuron to) {
+        this.weight = weight;
+        this.to = to;
+    }
+    
+    public void carry(double signal){
+        to.addToValue(signal*weight);
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
     
 }
