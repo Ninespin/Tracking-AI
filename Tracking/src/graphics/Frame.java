@@ -18,6 +18,7 @@ public class Frame {
     
     private BufferedImage image;
     private List<Shape> shapes;
+    private int trackedShapeIndex;
 
     /**
      * Crates a new frame, Containing the image <code>image</code>.
@@ -26,6 +27,7 @@ public class Frame {
     public Frame(BufferedImage image) {
         this.image = image;
         shapes = new LinkedList<>();
+        trackedShapeIndex = -1;
     }
 
     /**
@@ -50,5 +52,30 @@ public class Frame {
      */
     public List<Shape> getShapes(){
         return shapes;
+    }
+    
+    /*
+        sets the tracked shapes index in shapes to "i"s' value
+    */
+    public void setTrackedShapeIndex(int i){
+        trackedShapeIndex = i;
+    }
+    /*
+        returns trackedshapeindex
+    */
+    public int getTrackedShapeIndex(){
+        return trackedShapeIndex;
+    }
+    
+    /*
+        returns the tracked shape if applicable, or null and a warning
+    */
+    public Shape getTrackedShape(){
+        if(shapes.size() > 0 && trackedShapeIndex >= 0){
+            return shapes.get(trackedShapeIndex);
+        }
+        System.out.println("[WARNING] Frame.getTrackedShape returned null, shapes.size() was "+shapes.size()+" and trackedShapesIndex was "
+            +trackedShapeIndex);
+        return null;
     }
 }

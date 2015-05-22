@@ -13,12 +13,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
 import java.util.ConcurrentModificationException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
+import tracking.DisplacementVector;
 import tracking.Tracking;
 
 /**
@@ -33,7 +35,15 @@ public class Display extends JPanel implements Scrollable{
     private boolean running = true;
     PatternDetector p;
 
+    private Tracking t;
+    
+    
     public Display() {
+        try{
+            Template temp = new Template(ImageIO.read(new File("C:\\Users\\jérémi\\Desktop\\template.png")));
+            t = new Tracking(temp);
+        }catch(Exception e){}
+        
         this.setSize(new Dimension(200, 200));
         th = new Thread(() -> {
             while (running) {
@@ -98,12 +108,20 @@ public class Display extends JPanel implements Scrollable{
             /*TRACKING TEST*/
             try{
                 if(frame.getShapes().size()>0){
-                    Template temp = new Template(ImageIO.read(new File("C:\\Users\\jérémi\\Desktop\\template.png")));
-                    Tracking t = new Tracking(temp);
+                    
                     //System.out.println("th"+temp.getHeight()+" tw"+temp.getWidth());
-                    t.setLastFrame(frame);
-                    t.setFirstFrame(frame);
+                    Frame bufferF = t.getFirstFrame();
+                    t.nextFrame(frame);
+                    
                     Shape match = t.getHighestMatch();
+                    
+                    if(t.getFirstFrame() != null){
+                        g.setColor(Color.yellow);
+                        DisplacementVector d = t.getDisplacementVector();
+                        g.drawRect(d.getT1().getTruePos().x, d.getT1().getTruePos().y,
+                                d.getT1().getWidth(),d.getT1().getHeight());
+                        g.drawLine(t.getPts()[0].x,t.getPts()[0].y,t.getPts()[1].x,t.getPts()[1].y);
+                    }
                     g.setColor(Color.green);
                     g.drawRect(match.getTruePos().x, match.getTruePos().y, match.getWidth(), match.getHeight());
                     
