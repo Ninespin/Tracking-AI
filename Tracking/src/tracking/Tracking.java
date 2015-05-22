@@ -34,28 +34,33 @@ public class Tracking {
         return compareWithTemplate(tracked,frame_2);
     }
     public double[] compareWithTemplate(Template t, Frame f){
-        double[] matchLevels = new double[f.getShapes().size()];
-        BufferedImage trackedSource = t.toImage();
-        for(int sh = 0; sh < f.getShapes().size();sh++){
-            Shape s = f.getShapes().get(sh);
-            BufferedImage s_source = s.getTemplate().toImage(),
-                    rescaled = new BufferedImage(trackedSource.getWidth(),trackedSource.getHeight(),BufferedImage.TYPE_INT_RGB);
-            Graphics g = rescaled.createGraphics();
-            g.drawImage(s_source, 0,0,trackedSource.getWidth(),trackedSource.getHeight(),null);
-            g.dispose();
-            
-            for(int y = 0; y < trackedSource.getHeight();y++){
-                double lineMatchLevel = 0;
-                for(int x = 0; x < trackedSource.getWidth();x++){
-                    if(trackedSource.getRGB(x,y) == rescaled.getRGB(x,y)){
-                        lineMatchLevel += 1/trackedSource.getWidth();
+        if(frame_1 == null || frame_2 == null){
+            System.out.println("Tracking."+new String((frame_1 == null)? "frame_1":"frame_2")+" is null");
+        }else{
+            double[] matchLevels = new double[f.getShapes().size()];
+            BufferedImage trackedSource = t.toImage();
+            for(int sh = 0; sh < f.getShapes().size();sh++){
+                Shape s = f.getShapes().get(sh);
+                BufferedImage s_source = s.getTemplate().toImage(),
+                        rescaled = new BufferedImage(trackedSource.getWidth(),trackedSource.getHeight(),BufferedImage.TYPE_INT_RGB);
+                Graphics g = rescaled.createGraphics();
+                g.drawImage(s_source, 0,0,trackedSource.getWidth(),trackedSource.getHeight(),null);
+                g.dispose();
+
+                for(int y = 0; y < trackedSource.getHeight();y++){
+                    double lineMatchLevel = 0;
+                    for(int x = 0; x < trackedSource.getWidth();x++){
+                        if(trackedSource.getRGB(x,y) == rescaled.getRGB(x,y)){
+                            lineMatchLevel += 1/trackedSource.getWidth();
+                        }
                     }
+                    matchLevels[sh] = lineMatchLevel/trackedSource.getHeight();
                 }
-                matchLevels[sh] = lineMatchLevel/trackedSource.getHeight();
             }
+
+            return matchLevels;
         }
-        
-        return matchLevels;
+        return new double[] {-1};
     }
     
     /*
@@ -81,6 +86,9 @@ public class Tracking {
     
     public void setFirstFrame(Frame f){
         frame_1 = f;
+    }
+    public void setLastFrame(Frame f){
+        frame_2 = f;
     }
     
     public void nextFrame(Frame frame){

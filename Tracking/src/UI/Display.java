@@ -7,16 +7,19 @@ package UI;
 
 import Shapes.PatternDetector;
 import Shapes.Shape;
+import Shapes.Template;
 import graphics.Frame;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ConcurrentModificationException;
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
+import tracking.Tracking;
 
 /**
  *
@@ -24,7 +27,7 @@ import javax.swing.Scrollable;
  */
 public class Display extends JPanel implements Scrollable{
 
-    private BufferedImage frame;
+    private Frame frame;
 
     private Thread th;
     private boolean running = true;
@@ -49,7 +52,7 @@ public class Display extends JPanel implements Scrollable{
     }
 
     public void refresh(){
-        Dimension d = new Dimension(frame.getWidth(),frame.getHeight());
+        Dimension d = new Dimension(frame.getImage().getWidth(),frame.getImage().getHeight());
         this.setMinimumSize(d);
         this.setPreferredSize(d);
         invalidate();
@@ -57,7 +60,7 @@ public class Display extends JPanel implements Scrollable{
     }
 
     public void setFrame(Frame _frame) {
-        frame = _frame.getImage();
+        frame = _frame;
         if(p!= null)
             p.stop();
         p = new PatternDetector(_frame);
@@ -72,7 +75,7 @@ public class Display extends JPanel implements Scrollable{
         g.setColor(Color.black);
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
         if (frame != null) {
-            g.drawImage(frame, 0, 0, frame.getWidth(), frame.getHeight(), null);//changed to true frame wt/ht
+            g.drawImage(frame.getImage(), 0, 0, frame.getImage().getWidth(), frame.getImage().getHeight(), null);//changed to true frame wt/ht
 
             /**/
             try {
@@ -91,6 +94,20 @@ public class Display extends JPanel implements Scrollable{
             }
 
             /**/
+            
+            /*TRACKING TEST*/
+            try{
+                Template temp = new Template(ImageIO.read(new File("C:\\Users\\jérémi\\Desktop\\b.png")));
+                Tracking t = new Tracking(temp);
+                t.setLastFrame(frame);
+                Shape match = t.getHighestMatch();
+                g.setColor(Color.green);
+                g.drawRect(match.getTruePos().x, match.getTruePos().y, match.getWidth(), match.getHeight());
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            
+            /*END TRACKING TEST*/
         } else {
             g.setColor(Color.yellow);
             g.drawString("There is no frame to draw", this.getWidth() / 2 - (g.getFontMetrics().stringWidth("There is no frame to draw")) / 2, this.getHeight() / 2 - 6);

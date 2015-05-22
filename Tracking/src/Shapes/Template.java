@@ -33,9 +33,9 @@ public class Template  implements Serializable{
         height = _image.getHeight();
         template = new int[height][width];
         
-        for(int i = 0 ; i < _image.getHeight();i++){
-            for(int j = 0; j < _image.getWidth();j++){
-                template[i][j] = _image.getRGB(i,j);
+        for(int i = 0 ; i < height;i++){
+            for(int j = 0; j < width;j++){
+                template[i][j] = _image.getRGB(i,j);    ///COORDFINATES OOB
             }
         }
     }
