@@ -4,6 +4,7 @@ import Shapes.Shape;
 import Shapes.Template;
 import graphics.Frame;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 /**
@@ -13,7 +14,9 @@ import java.awt.image.BufferedImage;
 public class Tracking {
     private Template tracked;
     private Frame frame_1,frame_2; 
-    
+    private Point[] pts;
+    private DisplacementVector d;
+            
     public Tracking(Template tracked){
         this.tracked = tracked;
         
@@ -87,8 +90,34 @@ public class Tracking {
             }
         }
         //System.out.println(highest);
-        Shape s = f.getShapes().get(index);
+        f.setTrackedShapeIndex(index);
+        Shape s = f.getTrackedShape();
+        compareTracked();
         return s;
+    }
+    
+    public void compareTracked(){
+        if(frame_1 != null && frame_2 != null){
+            /*DISPL VECTOR*/
+            d = new DisplacementVector(this.getFirstFrame(),this.getLastFrame());
+            pts = d.getDisplacement();
+            System.out.println(pts[0]+"\n"+pts[1]);
+            /*END DISPL VECTOR*/
+        }
+    }
+    
+    public Point[] getPts(){
+        if(pts == null){
+            compareTracked();
+        }
+        return pts;
+    }
+    
+    /*
+        returns the tracked shape object of the la last frame
+    */
+    public DisplacementVector getDisplacementVector(){
+        return d;
     }
     
     public void setFirstFrame(Frame f){
@@ -98,9 +127,9 @@ public class Tracking {
         frame_2 = f;
     }
     
-    public void nextFrame(Frame frame){
+    public void nextFrame(Frame f){
         frame_1 = frame_2;
-        frame_2 = frame;
+        frame_2 = f;
     }
     
     public Frame getLastFrame(){
