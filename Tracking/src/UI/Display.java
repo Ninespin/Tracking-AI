@@ -109,6 +109,7 @@ public class Display extends JPanel implements Scrollable{
                     
                 }
             }catch(Exception e){
+                System.out.println("C:\\Users\\jérémi\\Desktop\\template.png was probably not found");
                 e.printStackTrace();
             }
             
