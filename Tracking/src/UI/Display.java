@@ -113,11 +113,8 @@ public class Display extends JPanel implements Scrollable{
                     Frame bufferF = t.getFirstFrame();
                     t.nextFrame(frame);
                     
-                    
                     Shape match = t.getHighestMatch();
                     
-                    g.setColor(Color.green);
-                    g.drawRect(match.getTruePos().x, match.getTruePos().y, match.getWidth(), match.getHeight());
                     if(t.getFirstFrame() != null){
                         g.setColor(Color.yellow);
                         DisplacementVector d = t.getDisplacementVector();
@@ -125,6 +122,8 @@ public class Display extends JPanel implements Scrollable{
                                 d.getT1().getWidth(),d.getT1().getHeight());
                         g.drawLine(t.getPts()[0].x,t.getPts()[0].y,t.getPts()[1].x,t.getPts()[1].y);
                     }
+                    g.setColor(Color.green);
+                    g.drawRect(match.getTruePos().x, match.getTruePos().y, match.getWidth(), match.getHeight());
                     
                 }
             }catch(Exception e){
