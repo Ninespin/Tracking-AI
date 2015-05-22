@@ -79,9 +79,9 @@ public class Tracking {
         int index = 0;
         for(int i = 0; i < matches.length;i++){
             double d = matches[i];
-            System.out.println("_"+matches[i]);
+            //System.out.println("_"+matches[i]);
             if(d > highest){
-                System.out.println(d+" > "+highest);
+                //System.out.println(d+" > "+highest);
                 index = i;
                 highest = d;
             }
