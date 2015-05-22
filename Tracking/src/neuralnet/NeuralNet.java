@@ -23,7 +23,9 @@
  */
 package neuralnet;
 
+import java.util.ArrayList;
 import java.util.List;
+import math.Function;
 
 /**
  *
@@ -34,5 +36,16 @@ public class NeuralNet {
     List<List<Neuron>> layers;
     
     
+    public NeuralNet(int ... numbersOfNeurons){
+        layers = new ArrayList<>();
+        for (int i = 0; i < numbersOfNeurons.length; i++) {
+            layers.add(new ArrayList<>());
+            for (int j = 0; j < numbersOfNeurons[i]; j++) {
+                //Use reverse mode [...]
+                //layers.get(i).add(new Neuron(null, Function.sigmoid))
+            }
+        }
+        
+    }
     
 }
