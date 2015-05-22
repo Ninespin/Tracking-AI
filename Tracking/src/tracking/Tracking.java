@@ -79,11 +79,20 @@ public class Tracking {
         return s;
     }
     
+    public void setFirstFrame(Frame f){
+        frame_1 = f;
+    }
     
     public void nextFrame(Frame frame){
         frame_1 = frame_2;
         frame_2 = frame;
     }
     
+    public Frame getLastFrame(){
+        return frame_2;
+    }
+    public Frame getFirstFrame(){
+        return frame_1;
+    }
     
 }
