@@ -32,7 +32,7 @@ public class Display extends JPanel implements Scrollable {
     private Frame frame;
 
     private Thread th;
-    private boolean running = true;
+    private boolean running = true,paintOriginal = false;
     PatternDetector p;
 
     private Tracking t;
@@ -90,7 +90,8 @@ public class Display extends JPanel implements Scrollable {
         g.setColor(Color.black);
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
         if (frame != null) {
-            g.drawImage(frame.getImage(), 0, 0, frame.getImage().getWidth(), frame.getImage().getHeight(), null);//changed to true frame wt/ht
+            g.drawImage((paintOriginal)? frame.getTrueImage():frame.getImage(), 
+                    0, 0, frame.getImage().getWidth(), frame.getImage().getHeight(), null);//changed to true frame wt/ht
 
             /**/
             try {
@@ -137,6 +138,10 @@ public class Display extends JPanel implements Scrollable {
             g.drawString("There is no frame to draw", this.getWidth() / 2 - (g.getFontMetrics().stringWidth("There is no frame to draw")) / 2, this.getHeight() / 2 - 6);
         }
 
+    }
+    
+    public void setPaintOriginal(boolean b){
+        paintOriginal = b;
     }
 
     private void paintString(Graphics g, String s) {

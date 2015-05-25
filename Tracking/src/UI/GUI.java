@@ -46,6 +46,7 @@ public class GUI extends javax.swing.JFrame {
         chooseButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         display = new UI.Display();
+        paintTrueImgCheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -78,6 +79,13 @@ public class GUI extends javax.swing.JFrame {
 
         jScrollPane1.setViewportView(display);
 
+        paintTrueImgCheckBox.setText("Paint original frame");
+        paintTrueImgCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                paintTrueImgCheckBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -85,14 +93,15 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 599, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(goButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(chooseButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pathDisplay)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(paintTrueImgCheckBox)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -102,7 +111,8 @@ public class GUI extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(goButton)
                     .addComponent(pathDisplay)
-                    .addComponent(chooseButton))
+                    .addComponent(chooseButton)
+                    .addComponent(paintTrueImgCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
                 .addContainerGap())
@@ -114,7 +124,7 @@ public class GUI extends javax.swing.JFrame {
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
         try {
             FrameStream fs = new FrameStream(path);// <-- le path
-            Filter f = new Filter(Color.red,20);
+            Filter f = new Filter(Color.blue,30);
             FrameProcessor fp = new FrameProcessor(f,display);
             fs.setOutput(fp);
             fs.start();
@@ -134,6 +144,11 @@ public class GUI extends javax.swing.JFrame {
             pathDisplay.setText(PATH_PREFIX+path);
         }
     }//GEN-LAST:event_chooseButtonActionPerformed
+
+    private void paintTrueImgCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paintTrueImgCheckBoxActionPerformed
+        display.setPaintOriginal(paintTrueImgCheckBox.isSelected());
+        display.refresh();
+    }//GEN-LAST:event_paintTrueImgCheckBoxActionPerformed
 
     /**
      * @param args the command line arguments
@@ -169,6 +184,7 @@ public class GUI extends javax.swing.JFrame {
     private UI.Display display;
     private javax.swing.JButton goButton;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JCheckBox paintTrueImgCheckBox;
     private javax.swing.JLabel pathDisplay;
     // End of variables declaration//GEN-END:variables
 }

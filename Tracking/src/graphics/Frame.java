@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class Frame {
     
-    private BufferedImage image;
+    private BufferedImage image,trueImage;
     private List<Shape> shapes;
     private int trackedShapeIndex;
 
@@ -37,7 +37,16 @@ public class Frame {
     public BufferedImage getImage() {
         return image;
     }
-    
+    /*
+        trueImage is the original frame, with color
+        these are the set and get methods for trueImage
+    */
+    public BufferedImage getTrueImage(){
+        return trueImage;
+    }
+    public void setTrueImage(BufferedImage i){
+        trueImage = i;
+    }
     /**
      * Adds a new <code>Shape</code> to the currently detected shapes of this frame
      * @param shape the <code>Shape</code> to be added
