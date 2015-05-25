@@ -13,17 +13,17 @@ import java.awt.Color;
  */
 public class Filter {//color+errormargin
     private final Color filterColor;//color to look for
-    private final int uncertainty;//accepted margin in %
+    private final int precision;//accepted margin in %
     
     public Filter(Color _filterColor, int _margin){
         filterColor = _filterColor;
-        uncertainty = _margin;
+        precision = _margin;
     }
     
     public Color getColor(){
         return filterColor;
     }
-    public int getUncertainty(){
-        return uncertainty;
+    public int getPrecision(){
+        return precision;
     }
 }

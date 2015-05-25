@@ -28,7 +28,7 @@ public class FrameProcessor implements IImageProcessor{
     the white portion is what matches 
     */
     public BufferedImage applyFilter(BufferedImage frame, Filter filter){
-        int precision = (filter.getUncertainty() < 0)? 0 : (filter.getUncertainty() > 100)? 100 : filter.getUncertainty();
+        int precision = (filter.getPrecision() < 0)? 0 : (filter.getPrecision() > 100)? 100 : filter.getPrecision();
         int[] _colorComp = {filter.getColor().getRed(),filter.getColor().getGreen(),filter.getColor().getBlue()};
         final int margin = (int)(precision*255/100);
         
@@ -38,31 +38,31 @@ public class FrameProcessor implements IImageProcessor{
             for(int x = 0; x < frame.getWidth();x++){
                 Color tc = new Color(frame.getRGB(x, y));
                 int[] targetColor = {tc.getRed(),tc.getGreen(),tc.getBlue()};
-                
-                //filteredImage.setRGB(x,y,tc.getRed()<<16);
-                
-                if((targetColor[0] <= ((_colorComp[0]+margin < 255)? _colorComp[0]+margin : 255) && 
+                    //OLD WAY
+                        /*(targetColor[0] <= ((_colorComp[0]+margin < 255)? _colorComp[0]+margin : 255) && 
                          targetColor[0] >= ((_colorComp[0]-margin > 0)? _colorComp[0]-margin : 0))&&//red
                         (targetColor[1] <= ((_colorComp[1]+margin < 255)? _colorComp[1]+margin : 255)
                         && targetColor[1] >= ((_colorComp[1]-margin > 0)? _colorComp[1]-margin : 0))&&//green    
                         (targetColor[2] <= ((_colorComp[2]+margin < 255)? _colorComp[2]+margin : 255) 
-                        && targetColor[2] >= ((_colorComp[2]-margin > 0)? _colorComp[2]-margin : 0))){//blue
+                        && targetColor[2] >= ((_colorComp[2]-margin > 0)? _colorComp[2]-margin : 0))*/      
+                
+                if(_colorComp[0]>_colorComp[1]&&_colorComp[0]>_colorComp[2]){//most red
+                    if(targetColor[0] >((targetColor[1]+margin >= 255)? 254:targetColor[1]+margin) && 
+                        targetColor[0] > ((targetColor[2]+margin >= 255)? 254:targetColor[2]+margin) ){
                     filteredFrame.setRGB(x,y,Color.white.getRGB());
-                }/*
-                if(_colorComp[0] > _colorComp[1] && _colorComp[0] > _colorComp[2]){//all where red is higher
-                    if(targetColor[0] > targetColor[1] && targetColor[0] > targetColor[2]){
-                        filteredImage.setRGB(x,y,_highlightColor.getRGB());
                     }
-                }else if(_colorComp[2] > _colorComp[1] && _colorComp[0] < _colorComp[2]){//all where blue is higher
-                    if(targetColor[2] > targetColor[1] && targetColor[0] < targetColor[2]){
-                        filteredImage.setRGB(x,y,_highlightColor.getRGB());
+                }else if(_colorComp[0]<_colorComp[1]&&_colorComp[1]>_colorComp[2]){//most green
+                    if(targetColor[1] >((targetColor[0]+margin >= 255)? 254:targetColor[0]+margin) && 
+                        targetColor[1] > ((targetColor[2]+margin >= 255)? 254:targetColor[2]+margin) ){
+                    filteredFrame.setRGB(x,y,Color.white.getRGB());
+                    }
+                }else if(_colorComp[0]<_colorComp[2]&&_colorComp[1]<_colorComp[2]){//most blue
+                    if(targetColor[2] >((targetColor[0]+margin >= 255)? 254:targetColor[0]+margin) && 
+                        targetColor[2] > ((targetColor[1]+margin >= 255)? 254:targetColor[1]+margin) ){
+                    filteredFrame.setRGB(x,y,Color.white.getRGB());
                     }
                 }
-                else if(_colorComp[0] < _colorComp[1] && _colorComp[1] > _colorComp[2]){//all where green is higher
-                    if(targetColor[0] < targetColor[1] && targetColor[1] > targetColor[2]){
-                        filteredImage.setRGB(x,y,_highlightColor.getRGB());
-                    }
-                }*/
+                
             }
         }
         return filteredFrame;

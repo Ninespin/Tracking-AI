@@ -27,7 +27,7 @@ import tracking.Tracking;
  *
  * @author jeremi
  */
-public class Display extends JPanel implements Scrollable{
+public class Display extends JPanel implements Scrollable {
 
     private Frame frame;
 
@@ -36,14 +36,14 @@ public class Display extends JPanel implements Scrollable{
     PatternDetector p;
 
     private Tracking t;
-    
-    
+
     public Display() {
         try{
             Template temp = new Template(ImageIO.read(new File("C:\\Users\\jérémi\\Desktop\\template.png")));
             t = new Tracking(temp);
-        }catch(Exception e){}
-        
+        } catch (Exception e) {
+        }
+
         this.setSize(new Dimension(200, 200));
         th = new Thread(() -> {
             while (running) {
@@ -58,12 +58,13 @@ public class Display extends JPanel implements Scrollable{
     }
 
     public void start() {
-        if(th.getState()== Thread.State.NEW)
-        th.start();
+        if (th.getState() == Thread.State.NEW) {
+            th.start();
+        }
     }
 
-    public void refresh(){
-        Dimension d = new Dimension(frame.getImage().getWidth(),frame.getImage().getHeight());
+    public void refresh() {
+        Dimension d = new Dimension(frame.getImage().getWidth(), frame.getImage().getHeight());
         this.setMinimumSize(d);
         this.setPreferredSize(d);
         invalidate();
@@ -72,10 +73,13 @@ public class Display extends JPanel implements Scrollable{
 
     public void setFrame(Frame _frame) {
         frame = _frame;
-        if(p!= null)
+        if (p != null) {
             p.stop();
+        }
         p = new PatternDetector(_frame);
-        p.detectShapes(null); 
+        p.detectShapes(null);
+        t.nextFrame(frame);
+        //Shape match = t.getHighestMatch();
         invalidate();
         repaint();
     }
@@ -105,33 +109,28 @@ public class Display extends JPanel implements Scrollable{
             }
 
             /**/
-            
             /*TRACKING TEST*/
-            try{
-                if(frame.getShapes().size()>0){
-                    
-                    //System.out.println("th"+temp.getHeight()+" tw"+temp.getWidth());
-                    Frame bufferF = t.getFirstFrame();
-                    t.nextFrame(frame);
-                    
+            try {
+                if (frame.getShapes().size() > 0) {
                     Shape match = t.getHighestMatch();
-                    
-                    if(t.getFirstFrame() != null){
+
+                    if (t.getFirstFrame() != null) {
                         g.setColor(Color.yellow);
                         DisplacementVector d = t.getDisplacementVector();
                         g.drawRect(d.getT1().getTruePos().x, d.getT1().getTruePos().y,
-                                d.getT1().getWidth(),d.getT1().getHeight());
-                        g.drawLine(t.getPts()[0].x,t.getPts()[0].y,t.getPts()[1].x,t.getPts()[1].y);
+                                d.getT1().getWidth(), d.getT1().getHeight());
+                        g.drawLine(t.getPts()[0].x, t.getPts()[0].y, t.getPts()[1].x, t.getPts()[1].y);
                     }
                     g.setColor(Color.green);
-                    g.drawRect(match.getTruePos().x, match.getTruePos().y, match.getWidth(), match.getHeight());
-                    
+                    if(match != null)
+                        g.drawRect(match.getTruePos().x, match.getTruePos().y, match.getWidth(), match.getHeight());
+
                 }
-            }catch(Exception e){
+            } catch (Exception e) {
                 System.out.println("C:\\Users\\jérémi\\Desktop\\template.png was probably not found");
                 e.printStackTrace();
             }
-            
+
             /*END TRACKING TEST*/
         } else {
             g.setColor(Color.yellow);
@@ -151,12 +150,12 @@ public class Display extends JPanel implements Scrollable{
 
     @Override
     public int getScrollableUnitIncrement(Rectangle rctngl, int i, int i1) {
-        return this.getWidth()/10;
+        return this.getWidth() / 10;
     }
 
     @Override
     public int getScrollableBlockIncrement(Rectangle rctngl, int i, int i1) {
-        return this.getWidth()/10;
+        return this.getWidth() / 10;
     }
 
     @Override

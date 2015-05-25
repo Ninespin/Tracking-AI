@@ -37,7 +37,7 @@ public class Tracking {
         return compareWithTemplate(tracked,frame_2);
     }
     public double[] compareWithTemplate(Template t, Frame f){
-        if(frame_1 == null || frame_2 == null){
+        if(/*frame_1 == null ||*/ frame_2 == null){
             System.out.println("Tracking."+new String((frame_1 == null)? "frame_1":"frame_2")+" is null");
         }else{
             double[] matchLevels = new double[f.getShapes().size()];
@@ -69,13 +69,17 @@ public class Tracking {
         return new double[] {-1};
     }
     
-    /*
-        returns the shapes whom has the highest match level
-        uses compareWithTemplate()
-    */
+    /**
+     * returns the shapes whom has the highest match level
+     * uses compareWithTemplate()
+     */
     public Shape getHighestMatch(){
+        if(frame_2 == null){
+            return null;
+        }
         return getHighestMatch(tracked,frame_2);
     }
+    
     public Shape getHighestMatch(Template t, Frame f){
         double[] matches = this.compareWithTemplate();
         double highest = 0;
@@ -118,13 +122,6 @@ public class Tracking {
     */
     public DisplacementVector getDisplacementVector(){
         return d;
-    }
-    
-    public void setFirstFrame(Frame f){
-        frame_1 = f;
-    }
-    public void setLastFrame(Frame f){
-        frame_2 = f;
     }
     
     public void nextFrame(Frame f){

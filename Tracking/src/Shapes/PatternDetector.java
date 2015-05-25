@@ -22,7 +22,7 @@ public class PatternDetector {
     private ArrayList<Shape> detectedShapes;
     private Frame frame;
     private final int ERROR_MARGIN = 25;//in %
-    private final int SMALLSHAPE_FACTOR = 100001;
+    private final int SMALLSHAPE_FACTOR = 10001;
 
     private ArrayList<Shape> exclude,discarded;
     private boolean detectShapeResult = true;
