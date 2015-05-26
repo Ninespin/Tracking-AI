@@ -41,12 +41,20 @@ public class GUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jCheckBox2 = new javax.swing.JCheckBox();
         goButton = new javax.swing.JButton();
         pathDisplay = new javax.swing.JLabel();
         chooseButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         display = new UI.Display();
         paintTrueImgCheckBox = new javax.swing.JCheckBox();
+        emphShapesCheckBox = new javax.swing.JCheckBox();
+        matchPercentCheckBox = new javax.swing.JCheckBox();
+
+        jCheckBox1.setText("jCheckBox1");
+
+        jCheckBox2.setText("jCheckBox2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -86,6 +94,21 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
+        emphShapesCheckBox.setText("Emphacise shapes");
+        emphShapesCheckBox.setEnabled(false);
+        emphShapesCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                emphShapesCheckBoxActionPerformed(evt);
+            }
+        });
+
+        matchPercentCheckBox.setText("Show match percent");
+        matchPercentCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                matchPercentCheckBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -93,7 +116,6 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 599, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(goButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -101,20 +123,29 @@ public class GUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pathDisplay)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(paintTrueImgCheckBox)))
+                        .addComponent(matchPercentCheckBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(paintTrueImgCheckBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(emphShapesCheckBox))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 835, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(goButton)
-                    .addComponent(pathDisplay)
-                    .addComponent(chooseButton)
-                    .addComponent(paintTrueImgCheckBox))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(goButton)
+                        .addComponent(pathDisplay)
+                        .addComponent(chooseButton))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(paintTrueImgCheckBox)
+                        .addComponent(emphShapesCheckBox)
+                        .addComponent(matchPercentCheckBox)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -147,8 +178,19 @@ public class GUI extends javax.swing.JFrame {
 
     private void paintTrueImgCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paintTrueImgCheckBoxActionPerformed
         display.setPaintOriginal(paintTrueImgCheckBox.isSelected());
+        emphShapesCheckBox.setEnabled(paintTrueImgCheckBox.isSelected());
         display.refresh();
     }//GEN-LAST:event_paintTrueImgCheckBoxActionPerformed
+
+    private void emphShapesCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emphShapesCheckBoxActionPerformed
+        display.setEmphasis(emphShapesCheckBox.isSelected());
+        display.refresh();
+    }//GEN-LAST:event_emphShapesCheckBoxActionPerformed
+
+    private void matchPercentCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_matchPercentCheckBoxActionPerformed
+        display.setMatchStringVisible(matchPercentCheckBox.isSelected());
+        display.refresh();
+    }//GEN-LAST:event_matchPercentCheckBoxActionPerformed
 
     /**
      * @param args the command line arguments
@@ -182,8 +224,12 @@ public class GUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton chooseButton;
     private UI.Display display;
+    private javax.swing.JCheckBox emphShapesCheckBox;
     private javax.swing.JButton goButton;
+    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JCheckBox matchPercentCheckBox;
     private javax.swing.JCheckBox paintTrueImgCheckBox;
     private javax.swing.JLabel pathDisplay;
     // End of variables declaration//GEN-END:variables

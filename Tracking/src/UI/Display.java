@@ -32,7 +32,8 @@ public class Display extends JPanel implements Scrollable {
     private Frame frame;
 
     private Thread th;
-    private boolean running = true,paintOriginal = false;
+    private boolean running = true,paintOriginal = false,enphaciseOriginal = false,
+            showMatchString = false;
     PatternDetector p;
 
     private Tracking t;
@@ -92,17 +93,27 @@ public class Display extends JPanel implements Scrollable {
         if (frame != null) {
             g.drawImage((paintOriginal)? frame.getTrueImage():frame.getImage(), 
                     0, 0, frame.getImage().getWidth(), frame.getImage().getHeight(), null);//changed to true frame wt/ht
+            g.setColor(new Color(0,0,0,0.75f));
+            
+            if(paintOriginal && enphaciseOriginal)g.fillRect( 0, 0, frame.getImage().getWidth(), frame.getImage().getHeight());
 
             /**/
             try {
                 for (int i = 0; i < p.getShapes().size(); i++) {
                     Shape s = p.getShapes().get(i);
                     g.setColor(Color.red);
+                    if(paintOriginal && enphaciseOriginal)g.drawImage(frame.getTrueImage().getSubimage(s.getTruePos().x, s.getTruePos().y, s.getWidth(), s.getHeight()),
+                            s.getTruePos().x, s.getTruePos().y, s.getWidth(), s.getHeight(),null);
                     g.drawRect(s.getTruePos().x, s.getTruePos().y, s.getWidth(), s.getHeight());
                     g.drawLine(s.getCenter().x - s.getWidth() / 20, s.getCenter().y, s.getCenter().x + s.getWidth() / 20, s.getCenter().y);
                     g.drawLine(s.getCenter().x, s.getCenter().y - s.getHeight() / 20,
                             s.getCenter().x, s.getCenter().y + s.getHeight() / 20);
                     g.drawString("" + i, s.getTruePos().x + 5, s.getTruePos().y + 10);
+                    if(t.getMatches() != null){
+                        String match = (t.getMatchFor(i)*100 < 10)? "0"+(int)(t.getMatchFor(i)*100):(int)(t.getMatchFor(i)*100)+"%";
+                        if(showMatchString)g.drawString(match, (int)(s.getCenter().x-g.getFontMetrics().stringWidth(match)/2),
+                            s.getTruePos().y - 10);
+                    }
                 }
             } catch (ConcurrentModificationException e) {
                 g.setColor(Color.yellow);
@@ -112,6 +123,7 @@ public class Display extends JPanel implements Scrollable {
             /**/
             /*TRACKING TEST*/
             try {
+                if(t.getLastFrame() == null){t.nextFrame(frame);}
                 if (frame.getShapes().size() > 0) {
                     Shape match = t.getHighestMatch();
 
@@ -128,7 +140,7 @@ public class Display extends JPanel implements Scrollable {
 
                 }
             } catch (Exception e) {
-                System.out.println("C:\\Users\\jérémi\\Desktop\\template.png was probably not found");
+                
                 e.printStackTrace();
             }
 
@@ -142,6 +154,12 @@ public class Display extends JPanel implements Scrollable {
     
     public void setPaintOriginal(boolean b){
         paintOriginal = b;
+    }
+    public void setEmphasis(boolean b){
+        enphaciseOriginal = b;
+    }
+    public void setMatchStringVisible(boolean b){
+        showMatchString = b;
     }
 
     private void paintString(Graphics g, String s) {

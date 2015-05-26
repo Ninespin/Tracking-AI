@@ -45,21 +45,29 @@ public class FrameProcessor implements IImageProcessor{
                         && targetColor[1] >= ((_colorComp[1]-margin > 0)? _colorComp[1]-margin : 0))&&//green    
                         (targetColor[2] <= ((_colorComp[2]+margin < 255)? _colorComp[2]+margin : 255) 
                         && targetColor[2] >= ((_colorComp[2]-margin > 0)? _colorComp[2]-margin : 0))*/      
-                
-                if(_colorComp[0]>_colorComp[1]&&_colorComp[0]>_colorComp[2]){//most red
-                    if(targetColor[0] >((targetColor[1]+margin >= 255)? 254:targetColor[1]+margin) && 
-                        targetColor[0] > ((targetColor[2]+margin >= 255)? 254:targetColor[2]+margin) ){
-                    filteredFrame.setRGB(x,y,Color.white.getRGB());
+                if(filter.getColor() == Color.red || filter.getColor() == Color.blue || filter.getColor() == Color.green){
+                    if(_colorComp[0]>_colorComp[1]&&_colorComp[0]>_colorComp[2]){//most red
+                        if(targetColor[0] >((targetColor[1]+margin >= 255)? 254:targetColor[1]+margin) && 
+                                targetColor[0] > ((targetColor[2]+margin >= 255)? 254:targetColor[2]+margin) ){
+                            filteredFrame.setRGB(x,y,Color.white.getRGB());
+                        }
+                    }else if(_colorComp[0]<_colorComp[1]&&_colorComp[1]>_colorComp[2]){//most green
+                        if(targetColor[1] >((targetColor[0]+margin >= 255)? 254:targetColor[0]+margin) && 
+                                targetColor[1] > ((targetColor[2]+margin >= 255)? 254:targetColor[2]+margin) ){
+                            filteredFrame.setRGB(x,y,Color.white.getRGB());
+                        }
+                    }else if(_colorComp[0]<_colorComp[2]&&_colorComp[1]<_colorComp[2]){//most blue
+                        if(targetColor[2] >((targetColor[0]+margin >= 255)? 254:targetColor[0]+margin) && 
+                                targetColor[2] > ((targetColor[1]+margin >= 255)? 254:targetColor[1]+margin) ){
+                            filteredFrame.setRGB(x,y,Color.white.getRGB());
+                        }
                     }
-                }else if(_colorComp[0]<_colorComp[1]&&_colorComp[1]>_colorComp[2]){//most green
-                    if(targetColor[1] >((targetColor[0]+margin >= 255)? 254:targetColor[0]+margin) && 
-                        targetColor[1] > ((targetColor[2]+margin >= 255)? 254:targetColor[2]+margin) ){
-                    filteredFrame.setRGB(x,y,Color.white.getRGB());
-                    }
-                }else if(_colorComp[0]<_colorComp[2]&&_colorComp[1]<_colorComp[2]){//most blue
-                    if(targetColor[2] >((targetColor[0]+margin >= 255)? 254:targetColor[0]+margin) && 
-                        targetColor[2] > ((targetColor[1]+margin >= 255)? 254:targetColor[1]+margin) ){
-                    filteredFrame.setRGB(x,y,Color.white.getRGB());
+                }else{
+                    if(targetColor[0]-targetColor[1] <= _colorComp[0]-_colorComp[1]+margin && 
+                            targetColor[0]-targetColor[1] >= _colorComp[0]-_colorComp[1]-margin &&
+                            targetColor[1]-targetColor[2] <= _colorComp[1]-_colorComp[2]+margin && 
+                            targetColor[1]-targetColor[2] >= _colorComp[1]-_colorComp[2]-margin ){
+                        filteredFrame.setRGB(x,y,Color.white.getRGB());
                     }
                 }
                 

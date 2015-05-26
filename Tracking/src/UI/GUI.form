@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <NonVisualComponents>
+    <Component class="javax.swing.JCheckBox" name="jCheckBox1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="jCheckBox1"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="jCheckBox2">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="jCheckBox2"/>
+      </Properties>
+    </Component>
+  </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
   </Properties>
@@ -26,7 +38,6 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" pref="599" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="goButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -34,8 +45,13 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="pathDisplay" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
+                      <Component id="matchPercentCheckBox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="paintTrueImgCheckBox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="emphShapesCheckBox" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="jScrollPane1" pref="835" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -45,14 +61,20 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="goButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="pathDisplay" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="chooseButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="paintTrueImgCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="goButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="pathDisplay" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="chooseButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="103" alignment="1" groupAlignment="3" attributes="0">
+                      <Component id="paintTrueImgCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="emphShapesCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="matchPercentCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="316" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="391" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -107,6 +129,23 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="paintTrueImgCheckBoxActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="emphShapesCheckBox">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Emphacise shapes"/>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="emphShapesCheckBoxActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="matchPercentCheckBox">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Show match percent"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="matchPercentCheckBoxActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

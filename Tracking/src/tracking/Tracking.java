@@ -16,7 +16,8 @@ public class Tracking {
     private Frame frame_1,frame_2; 
     private Point[] pts;
     private DisplacementVector d;
-            
+    private double[] matches;       
+    
     public Tracking(Template tracked){
         this.tracked = tracked;
         
@@ -75,13 +76,14 @@ public class Tracking {
      */
     public Shape getHighestMatch(){
         if(frame_2 == null){
+            System.out.println("frame 2 is null");
             return null;
         }
         return getHighestMatch(tracked,frame_2);
     }
     
     public Shape getHighestMatch(Template t, Frame f){
-        double[] matches = this.compareWithTemplate();
+        matches = this.compareWithTemplate();
         double highest = 0;
         int index = 0;
         for(int i = 0; i < matches.length;i++){
@@ -134,6 +136,12 @@ public class Tracking {
     }
     public Frame getFirstFrame(){
         return frame_1;
+    }
+    public double getMatchFor(int i){
+        return matches[i];
+    }
+    public double[] getMatches(){
+        return matches;
     }
     
 }
