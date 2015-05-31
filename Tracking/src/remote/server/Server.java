@@ -77,6 +77,7 @@ public class Server {
     }
 
     public void shutDown() {
+        pw.write("Q:");
         pw.close();
         try {
             br.close();

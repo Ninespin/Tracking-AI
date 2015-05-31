@@ -6,12 +6,16 @@
 package UI;
 
 import IO.FrameStream;
+import Shapes.Template;
 import graphics.Filter;
 import graphics.FrameProcessor;
 import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
+import remote.controller.RemoteController;
 import tracking.Tracking;
 
 /**
@@ -22,14 +26,19 @@ public class GUI extends javax.swing.JFrame {
 
     public static final String PATH_PREFIX = "Path :";
     private String path = "C:\\Users\\eloi\\Documents\\ArnaudDossiers\\Prog";
+    private RemoteController remote;
+    
     
     /**
      * Creates new form GUI
      */
     public GUI() {
+        remote = new RemoteController();
         initComponents();
         pathDisplay.setText(PATH_PREFIX + path);
         this.setLocationRelativeTo(null);
+        remote.setVisible(true);
+        this.addWindowListener(remote);
     }
 
     /**
@@ -154,12 +163,13 @@ public class GUI extends javax.swing.JFrame {
 
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
         try {
-            FrameStream fs = new FrameStream(path);// <-- le path
-            Filter f = new Filter(Color.red,20);
-            FrameProcessor fp = new FrameProcessor(f,display);
+            FrameStream fs = new FrameStream(remote);// <-- le path
+            Filter f = new Filter(Color.red,40);
+            FrameProcessor fp = new FrameProcessor(f,display,null);
             fs.setOutput(fp);
             fs.start();
-            display.start();
+            Template temp = new Template(ImageIO.read(new File("C:\\Users\\eloi\\Documents\\ArnaudDossiers\\Prog\\Templates\\temp.jpg")));
+            display.start(new Tracking(temp));
         } catch (IOException ex) {
             System.out.println("OOOOPs");
         }
@@ -217,6 +227,7 @@ public class GUI extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new GUI().setVisible(true);
+                
             }
         });
     }

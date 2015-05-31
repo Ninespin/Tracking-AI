@@ -10,10 +10,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import remote.controller.RemoteController;
 
 /**
  * Class that reads images and videos and sends them to be processed.
@@ -23,10 +25,12 @@ public class FrameStream implements Runnable{
     
     private static final String IMAGE_EXCTENTION = ".jpg";
     
-    private List<BufferedImage> images;
     private List<IImageProcessor> processors;
     
+    private IImageGetter imageGetter;
+    
     private Thread thread;
+    private boolean running;
     
     public FrameStream(String pathName) throws IOException{
         File f = new File(pathName);
@@ -34,9 +38,25 @@ public class FrameStream implements Runnable{
             throw new IOException("The provided file is not a directory.");
         }
         
-        images = getImages(getImagesInDirectory(f));
+        List<BufferedImage> images = getImages(getImagesInDirectory(f));
+        Iterator<BufferedImage> i = images.iterator();
         processors = new ArrayList<>();
         thread = new Thread(this,"Image Stream input thread");
+        imageGetter = ()->{
+            if(i.hasNext()){
+                return i.next();
+            }else{
+                return null;
+            }
+        };
+    }
+    
+    public FrameStream(RemoteController remote){
+        processors = new ArrayList<>();
+        thread = new Thread(this,"Image Stream input thread");
+        imageGetter = ()->{
+            return remote.getImage();
+        };
     }
     
     private List<BufferedImage> getImages(List<File> imagesFiles){
@@ -66,17 +86,19 @@ public class FrameStream implements Runnable{
     }
     
     public void start(){
+        running = true;
         thread.start();
     }
 
     @Override
     public void run() {
-        for (BufferedImage next : images) {
+        while(running){
+            BufferedImage img = imageGetter.getImage();
             for (IImageProcessor processor : processors) {
-                processor.process(new Frame(next));
+                processor.process(new Frame(img));
             }
             try {
-                thread.sleep(5000);
+                thread.sleep(3000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(FrameStream.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -84,5 +106,7 @@ public class FrameStream implements Runnable{
     }
     
     
-    
+    private interface IImageGetter{
+        public abstract BufferedImage getImage();
+    }
 }

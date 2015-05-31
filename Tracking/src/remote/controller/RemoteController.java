@@ -5,6 +5,9 @@
  */
 package remote.controller;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.awt.event.WindowStateListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -20,12 +23,15 @@ import remote.server.Server;
  *
  * @author Arnaud Paré-Vogt
  */
-public class RemoteController extends javax.swing.JFrame {
+public class RemoteController extends javax.swing.JFrame implements WindowListener{
     
     private Server server;
     private Server iServer;
     NumberFormat nfInteger;
     AbstractFormatterFactory integerFormatter;
+    
+    private boolean isDone = false;
+    private BufferedImage image;
     
     /**
      * Creates new form RemoteController
@@ -33,6 +39,7 @@ public class RemoteController extends javax.swing.JFrame {
     public RemoteController() {
         initComponents();
         initFormats();
+        this.addWindowListener(this);
     }
     
     private void initFormats(){
@@ -217,7 +224,14 @@ public class RemoteController extends javax.swing.JFrame {
                 try {
                     byte[] bytes = Base64.getDecoder().decode(s);
                     BufferedImage img = ImageIO.read(new ByteArrayInputStream(bytes));
+                    
                     imageDisplay.setImage(img);
+                    
+                    this.image = img;
+                    isDone = true;
+                    synchronized(this){
+                        this.notifyAll();
+                    }
                 } catch (IOException ex) {}
             });
             server.listenForConnection();
@@ -283,6 +297,22 @@ public class RemoteController extends javax.swing.JFrame {
             }
         });
     }
+    
+    public BufferedImage getImage(){
+        if(server.getCurrentStatus() != Server.ServerStatus.FINE || iServer.getCurrentStatus() != Server.ServerStatus.FINE){
+            return null;
+        }
+        try {
+            server.write("R:");
+            while(isDone == false){
+                synchronized(this){
+                    this.wait();
+                }
+            }
+        } catch (InterruptedException ex) {}
+        isDone = false;
+        return image;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField command;
@@ -299,4 +329,40 @@ public class RemoteController extends javax.swing.JFrame {
     private javax.swing.JButton send;
     private javax.swing.JButton updateButton;
     // End of variables declaration//GEN-END:variables
+
+
+    @Override
+    public void windowOpened(WindowEvent we) {
+    }
+
+    @Override
+    public void windowClosing(WindowEvent we) {
+        stop();
+        
+    }
+
+    @Override
+    public void windowClosed(WindowEvent we) {
+        stop();
+    }
+
+    @Override
+    public void windowIconified(WindowEvent we) {
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent we) {
+    }
+
+    @Override
+    public void windowActivated(WindowEvent we) {
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent we) {
+    }
+    
+    public void stop(){
+        server.shutDown();
+    }
 }

@@ -39,12 +39,7 @@ public class Display extends JPanel implements Scrollable {
     private Tracking t;
 
     public Display() {
-        try{
-            Template temp = new Template(ImageIO.read(new File("C:\\Users\\jérémi\\Desktop\\template.png")));
-            t = new Tracking(temp);
-        } catch (Exception e) {
-        }
-
+        
         this.setSize(new Dimension(200, 200));
         th = new Thread(() -> {
             while (running) {
@@ -58,18 +53,21 @@ public class Display extends JPanel implements Scrollable {
         }, "Display thread");
     }
 
-    public void start() {
+    public void start(Tracking t) {
+        this.t= t;
         if (th.getState() == Thread.State.NEW) {
             th.start();
         }
     }
 
     public void refresh() {
-        Dimension d = new Dimension(frame.getImage().getWidth(), frame.getImage().getHeight());
-        this.setMinimumSize(d);
-        this.setPreferredSize(d);
-        invalidate();
-        repaint();
+        if(frame != null){
+            Dimension d = new Dimension(frame.getImage().getWidth(), frame.getImage().getHeight());
+            this.setMinimumSize(d);
+            this.setPreferredSize(d);
+            invalidate();
+            repaint();
+        }
     }
 
     public void setFrame(Frame _frame) {
@@ -119,31 +117,32 @@ public class Display extends JPanel implements Scrollable {
                 g.setColor(Color.yellow);
                 paintString(g, "Wait");
             }
-
+            
             /**/
             /*TRACKING TEST*/
-            try {
-                if(t.getLastFrame() == null){t.nextFrame(frame);}
-                if (frame.getShapes().size() > 0) {
-                    Shape match = t.getHighestMatch();
+            if(t!= null){
+                try {
+                    if(t.getLastFrame() == null){t.nextFrame(frame);}
+                    if (frame.getShapes().size() > 0) {
+                        Shape match = t.getHighestMatch();
 
-                    if (t.getFirstFrame() != null) {
-                        g.setColor(Color.yellow);
-                        DisplacementVector d = t.getDisplacementVector();
-                        g.drawRect(d.getT1().getTruePos().x, d.getT1().getTruePos().y,
-                                d.getT1().getWidth(), d.getT1().getHeight());
-                        g.drawLine(t.getPts()[0].x, t.getPts()[0].y, t.getPts()[1].x, t.getPts()[1].y);
+                        if (t.getFirstFrame() != null) {
+                            g.setColor(Color.yellow);
+                            DisplacementVector d = t.getDisplacementVector();
+                            g.drawRect(d.getT1().getTruePos().x, d.getT1().getTruePos().y,
+                                    d.getT1().getWidth(), d.getT1().getHeight());
+                            g.drawLine(t.getPts()[0].x, t.getPts()[0].y, t.getPts()[1].x, t.getPts()[1].y);
+                        }
+                        g.setColor(Color.green);
+                        if(match != null)
+                            g.drawRect(match.getTruePos().x, match.getTruePos().y, match.getWidth(), match.getHeight());
+
                     }
-                    g.setColor(Color.green);
-                    if(match != null)
-                        g.drawRect(match.getTruePos().x, match.getTruePos().y, match.getWidth(), match.getHeight());
+                } catch (Exception e) {
 
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                
-                e.printStackTrace();
             }
-
             /*END TRACKING TEST*/
         } else {
             g.setColor(Color.yellow);

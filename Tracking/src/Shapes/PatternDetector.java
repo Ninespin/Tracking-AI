@@ -9,7 +9,6 @@ import graphics.Frame;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +39,7 @@ public class PatternDetector {
         detectedShapes = new ArrayList<Shape>();
         initThreads();
     }
-
+    
     /**
      * Used by the constructor to initialyse the threads that are used to detect the patterns.
      */
