@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Eloi.
+ * Copyright 2015 Arnaud Paré-Vogt.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@ package math;
 
 /**
  *
- * @author Eloi
+ * @author Arnaud Paré-Vogt
  */
 public interface Function {
     
