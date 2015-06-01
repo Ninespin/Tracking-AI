@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Arnaud Paré-Vogt.
+ * Copyright 2015 Aranud Paré-Vogt.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,17 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package math;
+package remote.utility;
+
+import java.awt.image.BufferedImage;
 
 /**
  *
- * @author Arnaud Paré-Vogt
+ * @author Aranud Paré-Vogt
  */
-public interface Function {
-    
-    public static Function sigmoid = (x)->{
-        return 1.0/(1-Math.pow(Math.E, -x));
-    };
-    
-    abstract double f(double x);
+public interface IImageListener {
+    public abstract void imageRecieved(BufferedImage s);
 }

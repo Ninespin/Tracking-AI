@@ -21,17 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package math;
+package remote.controller;
+
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import javax.swing.JPanel;
 
 /**
  *
  * @author Arnaud Paré-Vogt
  */
-public interface Function {
+public class ImageDisplay extends JPanel{
+
+    private Image img;
     
-    public static Function sigmoid = (x)->{
-        return 1.0/(1-Math.pow(Math.E, -x));
-    };
+    public ImageDisplay() {
+        super();
+        img = new BufferedImage(1,1,BufferedImage.TYPE_INT_RGB);
+    }
     
-    abstract double f(double x);
+    public void setImage (Image img){
+        this.img = img;
+        repaint();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        g.drawImage(img, 0, 0,this.getWidth(),this.getHeight(), null);
+    }
 }

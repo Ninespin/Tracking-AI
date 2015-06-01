@@ -21,17 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package math;
+package remote.utility;
 
 /**
- *
+ * Listens for Strings
  * @author Arnaud Paré-Vogt
  */
-public interface Function {
-    
-    public static Function sigmoid = (x)->{
-        return 1.0/(1-Math.pow(Math.E, -x));
-    };
-    
-    abstract double f(double x);
+public interface IStringListener {
+    public abstract void stringRecieved(String s);
 }
