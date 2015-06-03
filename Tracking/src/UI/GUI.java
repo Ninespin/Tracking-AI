@@ -61,6 +61,7 @@ public class GUI extends javax.swing.JFrame {
         paintTrueImgCheckBox = new javax.swing.JCheckBox();
         emphShapesCheckBox = new javax.swing.JCheckBox();
         matchPercentCheckBox = new javax.swing.JCheckBox();
+        jButton1 = new javax.swing.JButton();
 
         jCheckBox1.setText("jCheckBox1");
 
@@ -119,6 +120,13 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("example send to rasPi");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -133,6 +141,8 @@ public class GUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pathDisplay)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(matchPercentCheckBox)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(paintTrueImgCheckBox)
@@ -153,7 +163,8 @@ public class GUI extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(paintTrueImgCheckBox)
                         .addComponent(emphShapesCheckBox)
-                        .addComponent(matchPercentCheckBox)))
+                        .addComponent(matchPercentCheckBox)
+                        .addComponent(jButton1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
                 .addContainerGap())
@@ -214,6 +225,10 @@ public class GUI extends javax.swing.JFrame {
         display.refresh();
     }//GEN-LAST:event_matchPercentCheckBoxActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        remote.send("Greetings.");
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -249,6 +264,7 @@ public class GUI extends javax.swing.JFrame {
     private UI.Display display;
     private javax.swing.JCheckBox emphShapesCheckBox;
     private javax.swing.JButton goButton;
+    private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JScrollPane jScrollPane1;

@@ -273,6 +273,13 @@ public class RemoteController extends javax.swing.JFrame implements WindowListen
             command.setText("");
         }
     }
+    public void send(String s){
+        if(server != null && server.getCurrentStatus() == Server.ServerStatus.FINE){
+            server.write(s);
+            log(command.getText());
+            command.setText("");
+        }
+    }
     
     /**
      * @param args the command line arguments
