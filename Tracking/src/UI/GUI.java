@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import remote.controller.RemoteController;
 import tracking.Tracking;
@@ -163,7 +164,17 @@ public class GUI extends javax.swing.JFrame {
 
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
         try {
-            FrameStream fs = new FrameStream(remote);// <-- le path
+            FrameStream fs;
+            if(remote.isConnected()){
+                fs = new FrameStream(remote);// <-- le serveur
+            }else{
+                int i = JOptionPane.showOptionDialog(this, "The Server is not connected. Do you wish to loat the files from a local repository?", "Server not connected", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,null,null,null);
+                if(i == JOptionPane.YES_OPTION){
+                    fs = new FrameStream(path);// <-- le path
+                }else{
+                    return;
+                }
+            }
             Filter f = new Filter(Color.red,40);
             FrameProcessor fp = new FrameProcessor(f,display,null);
             fs.setOutput(fp);

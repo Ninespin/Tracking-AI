@@ -298,6 +298,11 @@ public class RemoteController extends javax.swing.JFrame implements WindowListen
         });
     }
     
+    
+    public boolean isConnected(){
+        return (server!=null)&&(iServer!=null)&&(server.getCurrentStatus()==Server.ServerStatus.FINE)&&(iServer.getCurrentStatus()==Server.ServerStatus.FINE);
+    }
+    
     public BufferedImage getImage(){
         if(server.getCurrentStatus() != Server.ServerStatus.FINE || iServer.getCurrentStatus() != Server.ServerStatus.FINE){
             return null;
@@ -363,6 +368,11 @@ public class RemoteController extends javax.swing.JFrame implements WindowListen
     }
     
     public void stop(){
-        server.shutDown();
+        if(server!= null){
+            server.shutDown();
+        }
+        if(iServer!=null){
+            iServer.shutDown();
+        }
     }
 }
