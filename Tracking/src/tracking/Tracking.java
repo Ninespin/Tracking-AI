@@ -44,6 +44,7 @@ public class Tracking {
             double[] matchLevels = new double[f.getShapes().size()];
             BufferedImage trackedSource = t.toImage();
             for(int sh = 0; sh < f.getShapes().size();sh++){
+                System.out.println("iteration");
                 Shape s = f.getShapes().get(sh);
                 BufferedImage s_source = s.getTemplate().toImage(),
                         rescaled = new BufferedImage(trackedSource.getWidth(),trackedSource.getHeight(),BufferedImage.TYPE_INT_RGB);
@@ -64,9 +65,10 @@ public class Tracking {
                 }
                 matchLevels[sh] = lMatchLevels;
             }
-
+            
             return matchLevels;
         }
+        System.out.println("noooo");
         return new double[] {-1};
     }
     
@@ -128,6 +130,7 @@ public class Tracking {
     
     public void nextFrame(Frame f){
         frame_1 = frame_2;
+        if(frame_2 == null)System.out.println("null2 bitch");
         frame_2 = f;
     }
     
@@ -138,6 +141,8 @@ public class Tracking {
         return frame_1;
     }
     public double getMatchFor(int i){
+        System.out.println("i."+i);
+        System.out.println("M."+matches.length);
         return matches[i];
     }
     public double[] getMatches(){

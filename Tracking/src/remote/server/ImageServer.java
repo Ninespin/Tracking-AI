@@ -138,6 +138,7 @@ public class ImageServer{
                     BufferedImage i = ImageIO.read(file);
                     output.imageRecieved(i);
                 } catch (IOException ex) {
+                    System.out.println("null at Iserver");
                     output.imageRecieved(null);
                 }
             }

@@ -175,11 +175,12 @@ public class GUI extends javax.swing.JFrame {
                     return;
                 }
             }
-            Filter f = new Filter(Color.red,40);
+            Filter f = new Filter(Color.red,20);
             FrameProcessor fp = new FrameProcessor(f,display,null);
             fs.setOutput(fp);
             fs.start();
-            Template temp = new Template(ImageIO.read(new File("C:\\Users\\eloi\\Documents\\ArnaudDossiers\\Prog\\Templates\\temp.jpg")));
+            Template temp = new Template(ImageIO.read(new File("C:\\Users\\jérémi\\Desktop\\template.png")));
+            
             display.start(new Tracking(temp));
         } catch (IOException ex) {
             System.out.println("OOOOPs");

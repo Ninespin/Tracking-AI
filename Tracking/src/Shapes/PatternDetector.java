@@ -238,6 +238,7 @@ public class PatternDetector {
             if(s.getWidth()*s.getHeight() > frame.getImage().getWidth()*frame.getImage().getHeight()/SMALLSHAPE_FACTOR){
                 detectedShapes.add(s);
                 frame.addShapes(s);
+                System.out.println(detectedShapes.size()+"=");
             }else{
                 discarded.add(s);
             }

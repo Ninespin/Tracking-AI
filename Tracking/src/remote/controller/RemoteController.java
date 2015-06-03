@@ -314,7 +314,7 @@ public class RemoteController extends javax.swing.JFrame implements WindowListen
                     this.wait();
                 }
             }
-        } catch (InterruptedException ex) {}
+        } catch (InterruptedException ex) {System.out.println(ex+" at Rcontroller");}
         isDone = false;
         return image;
     }

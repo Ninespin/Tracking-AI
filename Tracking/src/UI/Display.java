@@ -77,7 +77,8 @@ public class Display extends JPanel implements Scrollable {
         }
         p = new PatternDetector(_frame);
         p.detectShapes(null);
-        t.nextFrame(frame);
+        System.out.println("t"+t);
+        t.nextFrame(frame);//this motherfucker (t) is null... why?
         //Shape match = t.getHighestMatch();
         invalidate();
         repaint();
@@ -95,30 +96,7 @@ public class Display extends JPanel implements Scrollable {
             
             if(paintOriginal && enphaciseOriginal)g.fillRect( 0, 0, frame.getImage().getWidth(), frame.getImage().getHeight());
 
-            /**/
-            try {
-                for (int i = 0; i < p.getShapes().size(); i++) {
-                    Shape s = p.getShapes().get(i);
-                    g.setColor(Color.red);
-                    if(paintOriginal && enphaciseOriginal)g.drawImage(frame.getTrueImage().getSubimage(s.getTruePos().x, s.getTruePos().y, s.getWidth(), s.getHeight()),
-                            s.getTruePos().x, s.getTruePos().y, s.getWidth(), s.getHeight(),null);
-                    g.drawRect(s.getTruePos().x, s.getTruePos().y, s.getWidth(), s.getHeight());
-                    g.drawLine(s.getCenter().x - s.getWidth() / 20, s.getCenter().y, s.getCenter().x + s.getWidth() / 20, s.getCenter().y);
-                    g.drawLine(s.getCenter().x, s.getCenter().y - s.getHeight() / 20,
-                            s.getCenter().x, s.getCenter().y + s.getHeight() / 20);
-                    g.drawString("" + i, s.getTruePos().x + 5, s.getTruePos().y + 10);
-                    if(t.getMatches() != null){
-                        String match = (t.getMatchFor(i)*100 < 10)? "0"+(int)(t.getMatchFor(i)*100):(int)(t.getMatchFor(i)*100)+"%";
-                        if(showMatchString)g.drawString(match, (int)(s.getCenter().x-g.getFontMetrics().stringWidth(match)/2),
-                            s.getTruePos().y - 10);
-                    }
-                }
-            } catch (ConcurrentModificationException e) {
-                g.setColor(Color.yellow);
-                paintString(g, "Wait");
-            }
             
-            /**/
             /*TRACKING TEST*/
             if(t!= null){
                 try {
@@ -144,6 +122,31 @@ public class Display extends JPanel implements Scrollable {
                 }
             }
             /*END TRACKING TEST*/
+            /**/
+            try {
+                for (int i = 0; i < p.getShapes().size(); i++) {
+                    Shape s = p.getShapes().get(i);
+                    System.out.println("p."+p.getShapes().size());
+                    g.setColor(Color.red);
+                    if(paintOriginal && enphaciseOriginal)g.drawImage(frame.getTrueImage().getSubimage(s.getTruePos().x, s.getTruePos().y, s.getWidth(), s.getHeight()),
+                            s.getTruePos().x, s.getTruePos().y, s.getWidth(), s.getHeight(),null);
+                    g.drawRect(s.getTruePos().x, s.getTruePos().y, s.getWidth(), s.getHeight());
+                    g.drawLine(s.getCenter().x - s.getWidth() / 20, s.getCenter().y, s.getCenter().x + s.getWidth() / 20, s.getCenter().y);
+                    g.drawLine(s.getCenter().x, s.getCenter().y - s.getHeight() / 20,
+                            s.getCenter().x, s.getCenter().y + s.getHeight() / 20);
+                    g.drawString("" + i, s.getTruePos().x + 5, s.getTruePos().y + 10);
+                    if(t.getMatches() != null){
+                        String match = (t.getMatchFor(i)*100 < 10)? "0"+(int)(t.getMatchFor(i)*100):(int)(t.getMatchFor(i)*100)+"%";
+                        if(showMatchString)g.drawString(match, (int)(s.getCenter().x-g.getFontMetrics().stringWidth(match)/2),
+                            s.getTruePos().y - 10);
+                    }
+                }
+            } catch (ConcurrentModificationException e) {
+                g.setColor(Color.yellow);
+                paintString(g, "Wait");
+            }
+            
+            /**/
         } else {
             g.setColor(Color.yellow);
             g.drawString("There is no frame to draw", this.getWidth() / 2 - (g.getFontMetrics().stringWidth("There is no frame to draw")) / 2, this.getHeight() / 2 - 6);

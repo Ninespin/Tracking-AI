@@ -65,7 +65,7 @@ public class FrameStream implements Runnable{
             try {
                 images.add(ImageIO.read(imagesFile));
             } catch (IOException ex) {
-                System.out.println("Imege "+imagesFile.getAbsolutePath()+" could not be read!");
+                System.out.println("Image "+imagesFile.getAbsolutePath()+" could not be read!");
             }
         }
         return images;
