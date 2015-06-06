@@ -7,19 +7,16 @@ package UI;
 
 import Shapes.PatternDetector;
 import Shapes.Shape;
-import Shapes.Template;
 import graphics.Frame;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.io.File;
 import java.util.ConcurrentModificationException;
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
+import remote.controller.RemoteController;
 import tracking.DisplacementVector;
 import tracking.Tracking;
 
@@ -37,6 +34,9 @@ public class Display extends JPanel implements Scrollable {
     PatternDetector p;
 
     private Tracking t;
+    
+    private DisplacementVector dv;
+    private RemoteController remote;
 
     public Display() {
         
@@ -106,10 +106,18 @@ public class Display extends JPanel implements Scrollable {
 
                         if (t.getFirstFrame() != null) {
                             g.setColor(Color.yellow);
-                            DisplacementVector d = t.getDisplacementVector();
-                            g.drawRect(d.getT1().getTruePos().x, d.getT1().getTruePos().y,
-                                    d.getT1().getWidth(), d.getT1().getHeight());
+                            dv = t.getDisplacementVector();
+                            g.drawRect(dv.getT1().getTruePos().x, dv.getT1().getTruePos().y,
+                                    dv.getT1().getWidth(), dv.getT1().getHeight());
                             g.drawLine(t.getPts()[0].x, t.getPts()[0].y, t.getPts()[1].x, t.getPts()[1].y);
+                            /**SENDING COORDS**/
+                            if(remote != null && dv != null){
+                                double dx = dv.getDisplacement()[1].x-dv.getDisplacement()[0].x;
+                                double dy = dv.getDisplacement()[1].y-dv.getDisplacement()[0].y;
+                                System.out.println("dx"+dx+" dy"+dy);
+                                remote.send("M:"+dx/100+":"+0);//dy/100);
+                            }
+                            /**END**/
                         }
                         g.setColor(Color.green);
                         if(match != null)
@@ -168,6 +176,16 @@ public class Display extends JPanel implements Scrollable {
         g.drawString(s, this.getWidth() / 2 - (g.getFontMetrics().stringWidth(s)) / 2, this.getHeight() / 2 - 6);
     }
 
+    public DisplacementVector getLastVector(){
+        return dv;
+    }
+    public void resetLastVector(){
+        dv = null;
+    }
+    public void passRemote(RemoteController r){
+        remote = r;
+    }
+    
     @Override
     public Dimension getPreferredScrollableViewportSize() {
         return getPreferredSize();

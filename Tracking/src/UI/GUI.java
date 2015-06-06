@@ -40,6 +40,7 @@ public class GUI extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         remote.setVisible(true);
         this.addWindowListener(remote);
+        display.passRemote(remote);
     }
 
     /**
@@ -257,6 +258,7 @@ public class GUI extends javax.swing.JFrame {
                 
             }
         });
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
