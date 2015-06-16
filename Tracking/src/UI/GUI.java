@@ -7,14 +7,13 @@ package UI;
 
 import IO.FrameStream;
 import IO.config.Config;
+import IO.debug.StandardOut;
 import Shapes.Template;
 import graphics.Filter;
 import graphics.FrameProcessor;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -39,6 +38,7 @@ public class GUI extends javax.swing.JFrame {
      */
     public GUI() {
         loadConfig();
+        setOutputStreams();
         remote = new RemoteController();
         initComponents();
         pathDisplay.setText(PATH_PREFIX + path);
@@ -61,6 +61,14 @@ public class GUI extends javax.swing.JFrame {
         }
         path = conf.getStringParam("path", path);
         conf.write();
+    }
+    
+    /**
+     * Changes the default system.out stream to a newer and cooler one
+     */
+    private void setOutputStreams(){
+        StandardOut out = new StandardOut(System.out);
+        System.setOut(out);
     }
 
     /**
