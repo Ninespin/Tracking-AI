@@ -6,12 +6,15 @@
 package UI;
 
 import IO.FrameStream;
+import IO.config.Config;
 import Shapes.Template;
 import graphics.Filter;
 import graphics.FrameProcessor;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -25,7 +28,8 @@ import tracking.Tracking;
  */
 public class GUI extends javax.swing.JFrame {
 
-    public static final String PATH_PREFIX = "Path :";
+    public static final String CONFIG_FILE_PATH = "mainConfig.txt";
+    public static final String PATH_PREFIX = "Path : ";
     private String path = "C:\\Users\\eloi\\Documents\\ArnaudDossiers\\Prog";
     private RemoteController remote;
     
@@ -34,6 +38,7 @@ public class GUI extends javax.swing.JFrame {
      * Creates new form GUI
      */
     public GUI() {
+        loadConfig();
         remote = new RemoteController();
         initComponents();
         pathDisplay.setText(PATH_PREFIX + path);
@@ -41,6 +46,21 @@ public class GUI extends javax.swing.JFrame {
         remote.setVisible(true);
         this.addWindowListener(remote);
         display.passRemote(remote);
+    }
+    
+    /**
+     * Load the configuration file, and sets the variables to their correct values, then closes it.
+     */
+    private void loadConfig(){
+        Config conf = new Config(CONFIG_FILE_PATH);
+        try {
+            conf.load();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "The config file could not be loaded. You may want to check the permissions/access you vave to the application's location.", "Config File load error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        path = conf.getStringParam("path", path);
+        conf.write();
     }
 
     /**
