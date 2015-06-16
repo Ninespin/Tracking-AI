@@ -18,18 +18,22 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import remote.controller.RemoteController;
 import tracking.Tracking;
 
 /**
- *
- * @author jeremi
+ * Main Class of the application. Used to generate the GUI, and set things up for the rest of the program.
+ * @author Jérémi Cyr et Arnaud Paré-Vogt
  */
 public class GUI extends javax.swing.JFrame {
 
     public static final String CONFIG_FILE_PATH = "mainConfig.txt";
-    public static final String PATH_PREFIX = "Path : ";
-    private String path = "C:\\Users\\eloi\\Documents\\ArnaudDossiers\\Prog";
+    public static final String IMAGES_PATH_PREFIX = "Images Path : ";
+    public static final String TEMPLATE_PATH_PREFIX = "Template Path : ";
+    private String imagePath = "C:\\Users\\eloi\\Documents\\ArnaudDossiers\\Prog";
+    private String templatePath = "C:\\Users\\jérémi\\Desktop\\template.png";
     private RemoteController remote;
     
     
@@ -41,7 +45,8 @@ public class GUI extends javax.swing.JFrame {
         setOutputStreams();
         remote = new RemoteController();
         initComponents();
-        pathDisplay.setText(PATH_PREFIX + path);
+        imagePathDisplay.setText(IMAGES_PATH_PREFIX + imagePath);
+        templatePathDisplay.setText(TEMPLATE_PATH_PREFIX + templatePath);
         this.setLocationRelativeTo(null);
         remote.setVisible(true);
         this.addWindowListener(remote);
@@ -59,7 +64,7 @@ public class GUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "The config file could not be loaded. You may want to check the permissions/access you vave to the application's location.", "Config File load error", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        path = conf.getStringParam("path", path);
+        imagePath = conf.getStringParam("path", imagePath);
         conf.write();
     }
     
@@ -87,10 +92,10 @@ public class GUI extends javax.swing.JFrame {
         display = new UI.Display();
         jScrollPane2 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
-        chooseButtonMainPath = new javax.swing.JButton();
-        pathDisplay = new javax.swing.JLabel();
+        chooseButtonImagePath = new javax.swing.JButton();
+        imagePathDisplay = new javax.swing.JLabel();
         chooseButtonTemplatePath = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        templatePathDisplay = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
@@ -127,14 +132,15 @@ public class GUI extends javax.swing.JFrame {
         jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
-        chooseButtonMainPath.setText("Choose Path");
-        chooseButtonMainPath.addActionListener(new java.awt.event.ActionListener() {
+        chooseButtonImagePath.setText("Choose Path");
+        chooseButtonImagePath.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chooseButtonMainPathActionPerformed(evt);
+                chooseButtonImagePathActionPerformed(evt);
             }
         });
 
-        pathDisplay.setText("Image Path :");
+        imagePathDisplay.setText("Image Path :");
+        imagePathDisplay.setToolTipText("");
 
         chooseButtonTemplatePath.setText("Choose Path");
         chooseButtonTemplatePath.addActionListener(new java.awt.event.ActionListener() {
@@ -143,7 +149,7 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Template path :");
+        templatePathDisplay.setText("Template path :");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -155,11 +161,11 @@ public class GUI extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(chooseButtonTemplatePath)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel1))
+                        .addComponent(templatePathDisplay))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(chooseButtonMainPath)
+                        .addComponent(chooseButtonImagePath)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pathDisplay)))
+                        .addComponent(imagePathDisplay)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -167,12 +173,12 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(chooseButtonMainPath)
-                    .addComponent(pathDisplay))
+                    .addComponent(chooseButtonImagePath)
+                    .addComponent(imagePathDisplay))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(chooseButtonTemplatePath)
-                    .addComponent(jLabel1))
+                    .addComponent(templatePathDisplay))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -249,7 +255,7 @@ public class GUI extends javax.swing.JFrame {
                         .addComponent(jScrollPane2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -276,7 +282,7 @@ public class GUI extends javax.swing.JFrame {
             }else{
                 int i = JOptionPane.showOptionDialog(this, "The Server is not connected. Do you wish to loat the files from a local repository?", "Server not connected", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,null,null,null);
                 if(i == JOptionPane.YES_OPTION){
-                    fs = new FrameStream(path);// <-- le path
+                    fs = new FrameStream(imagePath);// <-- le path
                 }else{
                     return;
                 }
@@ -285,7 +291,7 @@ public class GUI extends javax.swing.JFrame {
             FrameProcessor fp = new FrameProcessor(f,display,null);
             fs.setOutput(fp);
             fs.start();
-            Template temp = new Template(ImageIO.read(new File("C:\\Users\\jérémi\\Desktop\\template.png")));
+            Template temp = new Template(ImageIO.read(new File(templatePath)));
             
             display.start(new Tracking(temp));
         } catch (IOException ex) {
@@ -293,16 +299,16 @@ public class GUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_goButtonActionPerformed
 
-    private void chooseButtonMainPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseButtonMainPathActionPerformed
+    private void chooseButtonImagePathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseButtonImagePathActionPerformed
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int returnVal = chooser.showOpenDialog(this);
         if(returnVal == JFileChooser.APPROVE_OPTION) {
-            path = 
+            imagePath = 
                 chooser.getSelectedFile().getPath();
-            pathDisplay.setText(PATH_PREFIX+path);
+            imagePathDisplay.setText(IMAGES_PATH_PREFIX+imagePath);
         }
-    }//GEN-LAST:event_chooseButtonMainPathActionPerformed
+    }//GEN-LAST:event_chooseButtonImagePathActionPerformed
 
     private void paintTrueImgCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paintTrueImgCheckBoxActionPerformed
         display.setPaintOriginal(paintTrueImgCheckBox.isSelected());
@@ -325,7 +331,17 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void chooseButtonTemplatePathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseButtonTemplatePathActionPerformed
-        // TODO add your handling code here:
+        JFileChooser chooser = new JFileChooser();
+        FileFilter imageFilter = new FileNameExtensionFilter("Images", ImageIO.getReaderFileSuffixes());
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.addChoosableFileFilter(imageFilter);
+        chooser.setAcceptAllFileFilterUsed(false);
+        int returnVal = chooser.showOpenDialog(this);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            templatePath = 
+                chooser.getSelectedFile().getPath();
+            templatePathDisplay.setText(TEMPLATE_PATH_PREFIX+templatePath);
+        }
     }//GEN-LAST:event_chooseButtonTemplatePathActionPerformed
 
     /**
@@ -360,15 +376,15 @@ public class GUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton chooseButtonMainPath;
+    private javax.swing.JButton chooseButtonImagePath;
     private javax.swing.JButton chooseButtonTemplatePath;
     private UI.Display display;
     private javax.swing.JCheckBox emphShapesCheckBox;
     private javax.swing.JButton goButton;
+    private javax.swing.JLabel imagePathDisplay;
     private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -376,6 +392,6 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JCheckBox matchPercentCheckBox;
     private javax.swing.JCheckBox paintTrueImgCheckBox;
-    private javax.swing.JLabel pathDisplay;
+    private javax.swing.JLabel templatePathDisplay;
     // End of variables declaration//GEN-END:variables
 }

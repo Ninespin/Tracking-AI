@@ -45,7 +45,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jScrollPane3" min="-2" pref="199" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jScrollPane1" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="630" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -116,12 +116,12 @@
                           <Group type="102" attributes="0">
                               <Component id="chooseButtonTemplatePath" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                              <Component id="templatePathDisplay" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
-                              <Component id="chooseButtonMainPath" min="-2" max="-2" attributes="0"/>
+                              <Component id="chooseButtonImagePath" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="pathDisplay" min="-2" max="-2" attributes="0"/>
+                              <Component id="imagePathDisplay" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -133,13 +133,13 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="chooseButtonMainPath" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="pathDisplay" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="chooseButtonImagePath" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="imagePathDisplay" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="chooseButtonTemplatePath" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="templatePathDisplay" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -147,17 +147,18 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JButton" name="chooseButtonMainPath">
+            <Component class="javax.swing.JButton" name="chooseButtonImagePath">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Choose Path"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chooseButtonMainPathActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chooseButtonImagePathActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="pathDisplay">
+            <Component class="javax.swing.JLabel" name="imagePathDisplay">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Image Path :"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="chooseButtonTemplatePath">
@@ -168,7 +169,7 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chooseButtonTemplatePathActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel1">
+            <Component class="javax.swing.JLabel" name="templatePathDisplay">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Template path :"/>
               </Properties>
