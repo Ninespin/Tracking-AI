@@ -16,9 +16,13 @@ public class Shape{
     private Point truePosition,center;
     private Template template;
     private int width,height;
+    private double match;
     
-    public Shape(){}
+    public Shape(){
+        match = 0.0;
+    }
     public Shape(Template _t, Point _truePos){
+        this();
         template = _t;
         truePosition = _truePos;
         width = _t.getWidth();
@@ -46,6 +50,9 @@ public class Shape{
     public int getHeight(){
         return height;
     }
+    public double getMatch() {
+        return match;
+    }
     
     public void setTruePos(Point _p){
         truePosition = _p;
@@ -61,6 +68,9 @@ public class Shape{
     }
     public void setHeight(int _p){
         height = _p;
+    }
+    public void setMatch(double match) {
+        this.match = match;
     }
 
 }

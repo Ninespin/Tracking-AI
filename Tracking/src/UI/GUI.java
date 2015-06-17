@@ -40,6 +40,8 @@ public class GUI extends javax.swing.JFrame {
     
     private RemoteController remote;
     
+    private int state = 0;
+    private FrameStream fs;
     
     /**
      * Creates new form GUI
@@ -288,8 +290,10 @@ public class GUI extends javax.swing.JFrame {
     }
     
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
+        if(state == 0){state = 1;
+        
         try {
-            FrameStream fs;
+            
             if(remote.isConnected()){
                 fs = new FrameStream(remote);// <-- le serveur
             }else{
@@ -310,6 +314,11 @@ public class GUI extends javax.swing.JFrame {
             fs.sendImage();
         } catch (IOException ex) {
             System.out.println("OOOOPs");
+        }
+        
+        
+        }else{
+            fs.sendImage();
         }
     }//GEN-LAST:event_goButtonActionPerformed
 

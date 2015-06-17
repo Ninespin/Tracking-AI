@@ -6,6 +6,8 @@ import graphics.Frame;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -58,8 +60,9 @@ public class Tracking {
                     
                 }
                 matchLevels[sh] = lMatchLevels;
+                f.setShapeMatch(sh, lMatchLevels);
             }
-            
+            f.setValidMatches(true);
             return matchLevels;
         }
         System.out.println("noooo");
@@ -79,23 +82,31 @@ public class Tracking {
     }
     
     public Shape getHighestMatch(Template t, Frame f){
+        try {//TODO This is horrible, we need to refactor!
+            Thread.sleep(500);
+        } catch (InterruptedException ex) {}
+        
         matches = this.compareWithTemplate();
         double highest = 0;
         int index = 0;
-        for(int i = 0; i < matches.length;i++){
-            double d = matches[i];
-            //System.out.println("_"+matches[i]);
-            if(d > highest){
-                //System.out.println(d+" > "+highest);
-                index = i;
-                highest = d;
+        if(matches.length>0){
+            for(int i = 0; i < matches.length;i++){
+                double d = matches[i];
+                //System.out.println("_"+matches[i]);
+                if(d > highest){
+                    //System.out.println(d+" > "+highest);
+                    index = i;
+                    highest = d;
+                }
             }
+            //System.out.println(highest);
+        
+            f.setTrackedShapeIndex(index);
+            Shape s = f.getTrackedShape();
+            compareTracked();
+            return s;
         }
-        //System.out.println(highest);
-        f.setTrackedShapeIndex(index);
-        Shape s = f.getTrackedShape();
-        compareTracked();
-        return s;
+        return null;
     }
     
     public void compareTracked(){
@@ -105,6 +116,9 @@ public class Tracking {
             pts = d.getDisplacement();
             System.out.println(pts[0]+"\n"+pts[1]);
             /*END DISPL VECTOR*/
+        }else if(frame_1 == null && frame_2 != null){
+            d = new DisplacementVector(this.getLastFrame(),this.getLastFrame());
+            pts = d.getDisplacement();
         }
     }
     
@@ -126,6 +140,7 @@ public class Tracking {
         frame_1 = frame_2;
         if(frame_2 == null)System.out.println("null2 bitch");
         frame_2 = f;
+        analyseFrame();
     }
     
     public Frame getLastFrame(){
@@ -143,4 +158,16 @@ public class Tracking {
         return matches;
     }
     
+    /**
+     * Analyses the lestest frame and stores all information in it.
+     */
+    public void analyseFrame(){
+        if(frame_2 != null){
+            getHighestMatch(tracked,frame_2);//Stores the highest match in frame_2
+            if(frame_1 != null){
+            
+            
+            }
+        }
+    }
 }

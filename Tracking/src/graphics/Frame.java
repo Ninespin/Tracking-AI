@@ -11,80 +11,135 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Class that is used to pack a <code>BufferedImage</code> and the detection information about it.
+ * Class that is used to pack a <code>BufferedImage</code> and the detection
+ * information about it.
+ *
  * @author Jérémi Cyr & Arnaud Paré-Vogt
  */
 public class Frame {
-    
-    private BufferedImage image,trueImage;
+
+    private BufferedImage image, trueImage;
     private List<Shape> shapes;
     private int trackedShapeIndex;
 
+    private boolean validMatches;
+
     /**
      * Crates a new frame, Containing the image <code>image</code>.
+     *
      * @param image the image representad by this frame
      */
     public Frame(BufferedImage image) {
         this.image = image;
         shapes = new LinkedList<>();
         trackedShapeIndex = -1;
+        validMatches = false;
     }
 
     /**
      * Getter for the image of the frame
-     * @return the unaltered image of this frame, as an instance of <code>BufferedImage</code>
+     *
+     * @return the unaltered image of this frame, as an instance of
+     * <code>BufferedImage</code>
      */
     public BufferedImage getImage() {
         return image;
     }
     /*
-        trueImage is the original frame, with color
-        these are the set and get methods for trueImage
-    */
-    public BufferedImage getTrueImage(){
+     trueImage is the original frame, with color
+     these are the set and get methods for trueImage
+     */
+
+    public BufferedImage getTrueImage() {
         return trueImage;
     }
-    public void setTrueImage(BufferedImage i){
+
+    public void setTrueImage(BufferedImage i) {
         trueImage = i;
     }
+
     /**
-     * Adds a new <code>Shape</code> to the currently detected shapes of this frame
+     * Adds a new <code>Shape</code> to the currently detected shapes of this
+     * frame
+     *
      * @param shape the <code>Shape</code> to be added
      */
-    public void addShapes(Shape shape){
+    public void addShapes(Shape shape) {
         shapes.add(shape);
     }
-    
+
     /**
-     * Getter for the list of chapes that were detected on this frame. Because the frame itself does not detect the shapes, the result depends completly on the manipulations of the frame.
+     * Getter for the list of chapes that were detected on this frame. Because
+     * the frame itself does not detect the shapes, the result depends completly
+     * on the manipulations of the frame.
+     *
      * @return a <code>List</code> of shapes linked to this frame.
      */
-    public List<Shape> getShapes(){
+    public List<Shape> getShapes() {
         return shapes;
     }
-    
-    /*
-        sets the tracked shapes index in shapes to "i"s' value
-    */
-    public void setTrackedShapeIndex(int i){
+
+    /**
+     * sets the tracked shapes index in shapes to "i"s' value
+     *
+     * @param i the new Index to set
+     */
+    public void setTrackedShapeIndex(int i) {
         trackedShapeIndex = i;
     }
-    /*
-        returns trackedshapeindex
-    */
-    public int getTrackedShapeIndex(){
+
+    /**
+     * @return trackedshapeindex
+     */
+    public int getTrackedShapeIndex() {
         return trackedShapeIndex;
     }
-    
+
+    /**
+     * Returns the current shape match on a shape. Note that the shape match is
+     * not guarenteed to be final, or even to have a meaning soly by calling
+     * this method, you will have to look at result of
+     * <code>isValidMatches()</code>.
+     *
+     * @param shapeIndex the shape index
+     * @return the curent match of the shape, or -1 if the shape doesn't exist
+     */
+    public double getShapeMatch(int shapeIndex) {
+        if (shapeIndex >= 0 && shapeIndex < shapes.size()) {
+            return shapes.get(shapeIndex).getMatch();
+        }
+        return -1;
+    }
+
+    /**
+     * Sets the match percentage of a shape.
+     *
+     * @param shapeIndex the index of the shape
+     * @param shapeMatch the percentage match of the chape
+     */
+    public void setShapeMatch(int shapeIndex, double shapeMatch) {
+        if (shapeIndex >= 0 && shapeIndex < shapes.size()) {
+            shapes.get(shapeIndex).setMatch(shapeMatch);
+        }
+    }
+
+    public void setValidMatches(boolean validMatches) {
+        this.validMatches = validMatches;
+    }
+
+    public boolean isValidMatches() {
+        return validMatches;
+    }
+
     /*
-        returns the tracked shape if applicable, or null and a warning
-    */
-    public Shape getTrackedShape(){
-        if(shapes.size() > 0 && trackedShapeIndex >= 0){
+     returns the tracked shape if applicable, or null and a warning
+     */
+    public Shape getTrackedShape() {
+        if (shapes.size() > 0 && trackedShapeIndex >= 0) {
             return shapes.get(trackedShapeIndex);
         }
-        System.out.println("[WARNING] Frame.getTrackedShape returned null, shapes.size() was "+shapes.size()+" and trackedShapesIndex was "
-            +trackedShapeIndex);
+        System.out.println("[WARNING] Frame.getTrackedShape returned null, shapes.size() was " + shapes.size() + " and trackedShapesIndex was "
+                + trackedShapeIndex);
         return null;
     }
 }
