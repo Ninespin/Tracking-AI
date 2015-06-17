@@ -1,5 +1,4 @@
 string path E:\Documents\ArnaudDossiers\Prog
 
-//this is a test
-int test 10
-int test2 12
+//the number of milliseconds between two updates
+int millisecondsPerUpdate 1000

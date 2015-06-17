@@ -25,7 +25,9 @@ import tracking.Tracking;
  * @author jeremi
  */
 public class Display extends JPanel implements Scrollable {
-
+    
+    private int millisecondsPerUpdate = 1000;
+    
     private Frame frame;
 
     private Thread th;
@@ -44,13 +46,16 @@ public class Display extends JPanel implements Scrollable {
         th = new Thread(() -> {
             while (running) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(millisecondsPerUpdate);
                 } catch (InterruptedException ex) {
                 }
                 this.refresh();
-                //System.out.println("Repaint!");
             }
         }, "Display thread");
+    }
+
+    public void setMillisecondsPerUpdate(int millisecondsPerUpdate) {
+        this.millisecondsPerUpdate = millisecondsPerUpdate;
     }
 
     public void start(Tracking t) {

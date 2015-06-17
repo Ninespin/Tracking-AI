@@ -30,10 +30,14 @@ import tracking.Tracking;
 public class GUI extends javax.swing.JFrame {
 
     public static final String CONFIG_FILE_PATH = "mainConfig.txt";
+    
     public static final String IMAGES_PATH_PREFIX = "Images Path : ";
     public static final String TEMPLATE_PATH_PREFIX = "Template Path : ";
+    
     private String imagePath = "C:\\Users\\eloi\\Documents\\ArnaudDossiers\\Prog";
     private String templatePath = "C:\\Users\\jérémi\\Desktop\\template.png";
+    private int updateRate = 1000;
+    
     private RemoteController remote;
     
     
@@ -43,14 +47,12 @@ public class GUI extends javax.swing.JFrame {
     public GUI() {
         loadConfig();
         setOutputStreams();
-        remote = new RemoteController();
         initComponents();
+        initRemote();
         imagePathDisplay.setText(IMAGES_PATH_PREFIX + imagePath);
         templatePathDisplay.setText(TEMPLATE_PATH_PREFIX + templatePath);
+        display.setMillisecondsPerUpdate(updateRate);
         this.setLocationRelativeTo(null);
-        remote.setVisible(true);
-        this.addWindowListener(remote);
-        display.passRemote(remote);
     }
     
     /**
@@ -65,6 +67,7 @@ public class GUI extends javax.swing.JFrame {
             return;
         }
         imagePath = conf.getStringParam("path", imagePath);
+        updateRate = conf.getIntegerParam("millisecondsPerUpdate", updateRate);
         conf.write();
     }
     
@@ -274,6 +277,16 @@ public class GUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Called by the constructor to init Remote, the server connection.
+     */
+    private void initRemote(){
+        remote = new RemoteController();
+        remote.setVisible(true);
+        this.addWindowListener(remote);
+        display.passRemote(remote);
+    }
+    
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
         try {
             FrameStream fs;
