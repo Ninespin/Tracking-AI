@@ -99,13 +99,7 @@ public class Display extends JPanel implements Scrollable {
         painter.setGraphics(g);
         if(frame != null){
             painter.paintFrame(frame, t!=null ? t.getDisplacementVector() : null);
-        }
-        
-        /*
-            
-
-            
-        }*/ else {
+        }else {
             g.setColor(Color.yellow);
             g.drawString("There is no frame to draw", this.getWidth() / 2 - (g.getFontMetrics().stringWidth("There is no frame to draw")) / 2, this.getHeight() / 2 - 6);
         }
