@@ -25,16 +25,12 @@ package IO.config;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Class that allows to load config files and read their content. Config files
@@ -44,7 +40,8 @@ import java.util.logging.Logger;
  * <ul>
  * Form :
  * <li>type name value</li>
- * <li>//is a one-line comment that will be deleted on load</li>
+ * <li>int width 100</li>
+ * <li>//is a one-line comment</li>
  * </ul>
  *
  * @author Arnaud Paré-Vogt
@@ -54,6 +51,7 @@ public class Config {
     public static final String COMMENT_STARTER = "//";
 
     List<Param> content;
+    List<String> fileContent;
 
     File file;
 
@@ -68,6 +66,7 @@ public class Config {
         if(!path.endsWith(".txt"))throw new IllegalArgumentException("The provided path MUST end with '.txt'. The config file must indeed point to a text file.");
         file = new File(path);
         content = new ArrayList<>();
+        fileContent = new ArrayList<>();
     }
 
     /**
@@ -81,6 +80,7 @@ public class Config {
         BufferedReader br = new BufferedReader(new FileReader(file));
         String s;
         content.clear();
+        fileContent.clear();
 
         boolean mayHaveFailedWarning = false;
         boolean containsDuplicates = false;
@@ -88,33 +88,34 @@ public class Config {
         while ((s = br.readLine()) != null) {
 
             if (s.equals("")) {
-                break;//if the line is empty, we do not use it
+                fileContent.add(s);
+                continue;//if the line is empty, we do not use it
             }
 
             if (s.startsWith(COMMENT_STARTER)) {
-                
-                break;//the line is a comment
+                fileContent.add(s);
+                continue;//the line is a comment
             }
 
             String[] values = s.split(" ");//this should have three values in it : [type,name,value]
 
             if (values.length != 3) {
                 mayHaveFailedWarning = true;
-                break;//the lenght is bad. This means the file is probably corrupted.
+                continue;//the lenght is bad. This means the file is probably corrupted.
             }
 
             if (Type.isPartOf(values[0])==-1) {
                 mayHaveFailedWarning = true;
-                break;//some types are wrongs
+                continue;//some types are wrongs
             }
 
             boolean nameValid = true;//tests if the name is already present
             for (Param content1 : content) {
-                nameValid = nameValid && content1.getName().equals(values[1]);
+                nameValid = nameValid && (!content1.getName().equals(values[1]));
             }
             if (!nameValid) {
                 containsDuplicates = true;
-                break;//The name is not valid, there are duplicates
+                continue;//The name is not valid, there are duplicates
             }
             
             Object value;
@@ -122,11 +123,12 @@ public class Config {
             try{
                 value = parseValue(values[2],paramType);
             }catch(Exception e){
-                break;
+                continue;
             }
             Param parameter = new Param(paramType, values[1], value);
             
             content.add(parameter);
+            fileContent.add(s);
         }
         
         content.sort((Param t, Param t1) -> t.compareTo(t1));
@@ -145,8 +147,8 @@ public class Config {
         } catch (IOException ex) {
             return false;
         }
-        for (Param content1 : content) {
-            pw.println(content1.toString());
+        for (String content1 : fileContent) {
+            pw.println(content1);
         }
         pw.flush();
         pw.close();
@@ -187,6 +189,7 @@ public class Config {
         }
         Param p = new Param(Type.STRING,name,defaultValue);
         content.add(p);
+        fileContent.add(p.toString());
         return defaultValue;
     }
 
