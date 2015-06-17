@@ -19,7 +19,7 @@ import remote.controller.RemoteController;
 
 /**
  * Class that reads images and videos and sends them to be processed.
- * @author jeremi
+ * @author Jeremi Cyr & Aranud Paré-Vogt
  */
 public class FrameStream implements Runnable{
     
@@ -31,6 +31,8 @@ public class FrameStream implements Runnable{
     
     private Thread thread;
     private boolean running;
+    
+    private boolean readyToSendImages = false;
     
     public FrameStream(String pathName) throws IOException{
         File f = new File(pathName);
@@ -89,19 +91,34 @@ public class FrameStream implements Runnable{
         running = true;
         thread.start();
     }
+    
+    /**
+     * Tells the FrameStream to send the next image.
+     */
+    public void sendImage(){
+        synchronized(this){
+            readyToSendImages = true;
+            this.notifyAll();
+        }
+    }
 
     @Override
     public void run() {
         while(running){
+            try {
+                synchronized(this){
+                    while(!readyToSendImages){
+                        this.wait();
+                    }
+                }
+            } catch (InterruptedException ex) {
+                Logger.getLogger(FrameStream.class.getName()).log(Level.SEVERE, null, ex);
+            }
             BufferedImage img = imageGetter.getImage();
             for (IImageProcessor processor : processors) {
                 processor.process(new Frame(img));
             }
-            try {
-                thread.sleep(3000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(FrameStream.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            readyToSendImages=false;
         }
     }
     

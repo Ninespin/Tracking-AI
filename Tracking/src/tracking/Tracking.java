@@ -23,12 +23,6 @@ public class Tracking {
         
     }
     
-    /**
-     * @param args the command line arguments
-     */
-    public static void init(String[] args) {
-        
-    }
     /*
         gets all the shapes in the frame, rescale thier image in a buffer, compare buffer
         with templates' image, returns an array containing n doubles (0 <= m <= 1), one per shape, 

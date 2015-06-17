@@ -307,6 +307,7 @@ public class GUI extends javax.swing.JFrame {
             Template temp = new Template(ImageIO.read(new File(templatePath)));
             
             display.start(new Tracking(temp));
+            fs.sendImage();
         } catch (IOException ex) {
             System.out.println("OOOOPs");
         }
@@ -377,7 +378,6 @@ public class GUI extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        Tracking.init(args);
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
