@@ -63,18 +63,23 @@ public class Config {
      * @param path the path of the config file. It MUST end with .txt!
      */
     public Config(String path) {
-        if(!path.endsWith(".txt"))throw new IllegalArgumentException("The provided path MUST end with '.txt'. The config file must indeed point to a text file.");
+        if (!path.endsWith(".txt")) {
+            throw new IllegalArgumentException("The provided path MUST end with '.txt'. The config file must indeed point to a text file.");
+        }
         file = new File(path);
         content = new ArrayList<>();
         fileContent = new ArrayList<>();
     }
 
     /**
-     * Loads the content of the config file into the config object. After this, it becomes possible to read variables. Warning : all previously stored information will be deleted, you may want to condider writting it before.
+     * Loads the content of the config file into the config object. After this,
+     * it becomes possible to read variables. Warning : all previously stored
+     * information will be deleted, you may want to condider writting it before.
+     *
      * @throws IOException if an exception ocurs during the reading
      */
     public void load() throws IOException {
-        if(!file.exists()){
+        if (!file.exists()) {
             return;
         }
         BufferedReader br = new BufferedReader(new FileReader(file));
@@ -104,7 +109,7 @@ public class Config {
                 continue;//the lenght is bad. This means the file is probably corrupted.
             }
 
-            if (Type.isPartOf(values[0])==-1) {
+            if (Type.isPartOf(values[0]) == -1) {
                 mayHaveFailedWarning = true;
                 continue;//some types are wrongs
             }
@@ -117,33 +122,34 @@ public class Config {
                 containsDuplicates = true;
                 continue;//The name is not valid, there are duplicates
             }
-            
+
             Object value;
             Type paramType = Type.values()[Type.isPartOf(values[0])];
-            try{
-                value = parseValue(values[2],paramType);
-            }catch(Exception e){
+            try {
+                value = parseValue(values[2], paramType);
+            } catch (Exception e) {
                 continue;
             }
             Param parameter = new Param(paramType, values[1], value);
-            
+
             content.add(parameter);
             fileContent.add(s);
         }
-        
+
         content.sort((Param t, Param t1) -> t.compareTo(t1));
-        
+
         br.close();
     }
-    
+
     /**
      * Attempts to print the config file.
+     *
      * @return if the attempt was successfull
      */
-    public boolean write(){
+    public boolean write() {
         PrintWriter pw;
         try {
-            pw = new PrintWriter(new FileWriter(file,false));
+            pw = new PrintWriter(new FileWriter(file, false));
         } catch (IOException ex) {
             return false;
         }
@@ -154,15 +160,16 @@ public class Config {
         pw.close();
         return true;
     }
-    
+
     /**
      * Given a value and a type, attempts to pare it. Not safe.
+     *
      * @param value the value
      * @param paramType the type
      * @return the parsed value, of type <code>paramType.getType()</code>
      */
-    public Object parseValue(String value,Type paramType){
-        switch (paramType){
+    public Object parseValue(String value, Type paramType) {
+        switch (paramType) {
             case INT:
                 return Integer.parseInt(value);
             case STRING:
@@ -171,23 +178,60 @@ public class Config {
                 return null;
         }
     }
-    
+
     /**
-     * Gets a param from the config
-     * @param name
-     * @param defaultValue
-     * @return 
+     * Gets a param from the config. The param must : not exsist yet or exist
+     * and be the correct type (string). If the param exsists and is the wrong
+     * type, an IllegalArgumantException is thrown. If the parm does not exist,
+     * it is created and will be saves upon writting the cofig file, by calling
+     * <code>write()</code>.
+     *
+     * @param name The name of the parameter. It must be unique.
+     * @param defaultValue The default value of the parameter. It is going to be
+     * used if the parameter does not exsist yet
+     * @return The value of the parameter. If it did not exist, the default
+     * value, else the value specified in the confiuration file
      */
-    public String getStringParam(String name, String defaultValue){
+    public String getStringParam(String name, String defaultValue) {
         for (Param content1 : content) {
-            if(content1.getName().equals(name)){
-                if(content1.type == Type.STRING)
-                    return (String)content1.getValue();
-                else
+            if (content1.getName().equals(name)) {
+                if (content1.type == Type.STRING) {
+                    return (String) content1.getValue();
+                } else {
                     throw new IllegalArgumentException("The given param name does not contain a value of the type 'String'. You may want to consider reviewing the configuration file and/or use a different name.");
+                }
             }
         }
-        Param p = new Param(Type.STRING,name,defaultValue);
+        Param p = new Param(Type.STRING, name, defaultValue);
+        content.add(p);
+        fileContent.add(p.toString());
+        return defaultValue;
+    }
+    
+    /**
+     * Gets a param from the config. The param must : not exsist yet or exist
+     * and be the correct type (int). If the param exsists and is the wrong
+     * type, an IllegalArgumantException is thrown. If the parm does not exist,
+     * it is created and will be saves upon writting the cofig file, by calling
+     * <code>write()</code>.
+     *
+     * @param name The name of the parameter. It must be unique.
+     * @param defaultValue The default value of the parameter. It is going to be
+     * used if the parameter does not exsist yet
+     * @return The value of the parameter. If it did not exist, the default
+     * value, else the value specified in the confiuration file
+     */
+    public int getIntegerParam(String name, int defaultValue) {
+        for (Param content1 : content) {
+            if (content1.getName().equals(name)) {
+                if (content1.type == Type.INT) {
+                    return (int) content1.getValue();
+                } else {
+                    throw new IllegalArgumentException("The given param name does not contain a value of the type 'String'. You may want to consider reviewing the configuration file and/or use a different name.");
+                }
+            }
+        }
+        Param p = new Param(Type.INT, name, defaultValue);
         content.add(p);
         fileContent.add(p.toString());
         return defaultValue;
@@ -258,12 +302,14 @@ public class Config {
         public Class getType() {
             return type;
         }
-        
+
         /**
-         * Looks if the given String matches one on the parameters, and returns its index as if it had been in <code>values()</code>
-         * 
+         * Looks if the given String matches one on the parameters, and returns
+         * its index as if it had been in <code>values()</code>
+         *
          * @param s the name to compare to
-         * @return the index of the corresponding element if <code>values()</code>, or -1
+         * @return the index of the corresponding element if
+         * <code>values()</code>, or -1
          */
         public static int isPartOf(String s) {
             for (int i = 0; i < Type.values().length; i++) {
