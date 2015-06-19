@@ -8,6 +8,7 @@ package UI;
 import IO.FrameStream;
 import IO.config.Config;
 import IO.debug.StandardOut;
+import Shapes.PatternDetector;
 import Shapes.Template;
 import graphics.Filter;
 import graphics.FrameProcessor;
@@ -35,7 +36,7 @@ public class GUI extends javax.swing.JFrame {
     public static final String TEMPLATE_PATH_PREFIX = "Template Path : ";
     
     private String imagePath = "C:\\Users\\eloi\\Documents\\ArnaudDossiers\\Prog";
-    private String templatePath = "C:\\Users\\jérémi\\Desktop\\template.png";
+    private String templatePath = "E:\\Documents\\ArnaudDossiers\\Prog\\Templates\\temp.jpg";
     private int updateRate = 1000;
     
     private RemoteController remote;
@@ -292,31 +293,36 @@ public class GUI extends javax.swing.JFrame {
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
         if(state == 0){state = 1;
         
-        try {
-            
-            if(remote.isConnected()){
-                fs = new FrameStream(remote);// <-- le serveur
-            }else{
-                int i = JOptionPane.showOptionDialog(this, "The Server is not connected. Do you wish to loat the files from a local repository?", "Server not connected", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,null,null,null);
-                if(i == JOptionPane.YES_OPTION){
-                    fs = new FrameStream(imagePath);// <-- le path
+            try {
+                if(remote.isConnected()){
+                    fs = new FrameStream(remote);// <-- le serveur
                 }else{
-                    return;
+                    int i = JOptionPane.showOptionDialog(this, "The Server is not connected. Do you wish to loat the files from a local repository?", "Server not connected", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,null,null,null);
+                    if(i == JOptionPane.YES_OPTION){
+                        fs = new FrameStream(imagePath);// <-- le path
+                    }else{
+                        return;
+                    }
                 }
+                //TODO add options for this
+                Filter f = new Filter(Color.red,20);
+                //TODO pre-load template
+                Template temp = new Template(ImageIO.read(new File(templatePath)));
+                
+                Tracking tracking = new Tracking(temp, fs);
+                PatternDetector patDet = new PatternDetector(null, tracking);
+                FrameProcessor fp = new FrameProcessor(f,display,patDet);
+                fs.setOutput(fp);
+                fs.start();
+                tracking.start();
+                patDet.start();
+                display.start(tracking);
+                
+                fs.sendImage();
+            } catch (IOException ex) {
+                System.out.println("OOOOPs");
             }
-            Filter f = new Filter(Color.red,20);
-            FrameProcessor fp = new FrameProcessor(f,display,null);
-            fs.setOutput(fp);
-            fs.start();
-            Template temp = new Template(ImageIO.read(new File(templatePath)));
             
-            display.start(new Tracking(temp));
-            fs.sendImage();
-        } catch (IOException ex) {
-            System.out.println("OOOOPs");
-        }
-        
-        
         }else{
             fs.sendImage();
         }

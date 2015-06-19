@@ -1,28 +1,63 @@
 package tracking;
 
+import IO.FrameStream;
+import Shapes.PatternDetector;
 import Shapes.Shape;
 import Shapes.Template;
 import graphics.Frame;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
- * @author jeremi
+ * @author Jérémi Cyr & Arnaud Paré-Vogt
  */
 public class Tracking {
     private Template tracked;
     private Frame frame_1,frame_2; 
     private Point[] pts;
     private DisplacementVector d;
-    private double[] matches;       
     
-    public Tracking(Template tracked){
+    private final Thread analyserThread;//analyses the shapes to give them an error percentage.
+    private Runnable analyserRunnable;
+    public enum CurrentAnalisisStatus{REFRESH,REFRESH_LAST_CYCLE,RECYCLE,FINISHED};
+    private CurrentAnalisisStatus analisisStatus = CurrentAnalisisStatus.FINISHED;
+    
+    private boolean running = true;
+    
+    public Tracking(Template tracked, FrameStream fs){
         this.tracked = tracked;
-        
+        initThread();
+        analyserThread = new Thread(analyserRunnable, "AnalyserThread");
+    }
+    
+    private void initThread(){
+        analyserRunnable = ()->{//analyse shapes
+            int shapeIndex = 0;
+            
+            while(running){
+                while(analisisStatus == CurrentAnalisisStatus.FINISHED){
+                    synchronized(analyserThread){
+                        try {
+                            analyserThread.wait();
+                        } catch (InterruptedException ex) {}
+                    }
+                }
+                if(analisisStatus == CurrentAnalisisStatus.REFRESH){
+                    shapeIndex = compareWithTemplate(tracked, frame_2, shapeIndex);
+                }else if(analisisStatus == CurrentAnalisisStatus.RECYCLE){
+                    compareWithTemplate(tracked, frame_2, shapeIndex);
+                    shapeIndex = 0;
+                    analyseFrame();
+                    analisisStatus = CurrentAnalisisStatus.FINISHED;
+                }
+            }
+        };
+    }
+    
+    public void start(){
+        analyserThread.start();
     }
     
     /*
@@ -30,16 +65,18 @@ public class Tracking {
         with templates' image, returns an array containing n doubles (0 <= m <= 1), one per shape, 
         which contain the match percent
     */
-    public double[] compareWithTemplate(){
-        return compareWithTemplate(tracked,frame_2);
+    private void compareWithTemplate(){
+        synchronized(analyserThread){
+            analyserThread.notifyAll();
+        }
     }
-    public double[] compareWithTemplate(Template t, Frame f){
-        if(/*frame_1 == null ||*/ frame_2 == null){
+    private int compareWithTemplate(Template t, Frame f,int startIndex){
+        if(frame_2 == null){
             System.out.println("Tracking."+new String((frame_1 == null)? "frame_1":"frame_2")+" is null");
         }else{
-            double[] matchLevels = new double[f.getShapes().size()];
             BufferedImage trackedSource = t.toImage();
-            for(int sh = 0; sh < f.getShapes().size();sh++){
+            int sh;
+            for(sh = startIndex; sh < f.getShapes().size();sh++){
                 System.out.println("iteration");
                 Shape s = f.getShapes().get(sh);
                 BufferedImage s_source = s.getTemplate().toImage(),
@@ -59,14 +96,13 @@ public class Tracking {
                     lMatchLevels += lineMatchLevel/(trackedSource.getHeight()*trackedSource.getWidth());
                     
                 }
-                matchLevels[sh] = lMatchLevels;
                 f.setShapeMatch(sh, lMatchLevels);
             }
             f.setValidMatches(true);
-            return matchLevels;
+            return sh;
         }
         System.out.println("noooo");
-        return new double[] {-1};
+        return startIndex;
     }
     
     /**
@@ -82,21 +118,16 @@ public class Tracking {
     }
     
     public Shape getHighestMatch(Template t, Frame f){
-        try {//TODO This is horrible, we need to refactor!
-            Thread.sleep(500);
-        } catch (InterruptedException ex) {}
-        
-        matches = this.compareWithTemplate();
         double highest = 0;
         int index = 0;
-        if(matches.length>0){
-            for(int i = 0; i < matches.length;i++){
-                double d = matches[i];
+        if(f.getShapes().size()>0){
+            for(int i = 0; i < f.getShapes().size();i++){
+                double db = f.getShapeMatch(i);
                 //System.out.println("_"+matches[i]);
-                if(d > highest){
+                if(db > highest){
                     //System.out.println(d+" > "+highest);
                     index = i;
-                    highest = d;
+                    highest = db;
                 }
             }
             //System.out.println(highest);
@@ -140,7 +171,6 @@ public class Tracking {
         frame_1 = frame_2;
         if(frame_2 == null)System.out.println("null2 bitch");
         frame_2 = f;
-        analyseFrame();
     }
     
     public Frame getLastFrame(){
@@ -148,14 +178,6 @@ public class Tracking {
     }
     public Frame getFirstFrame(){
         return frame_1;
-    }
-    public double getMatchFor(int i){
-        System.out.println("i."+i);
-        System.out.println("M."+matches.length);
-        return matches[i];
-    }
-    public double[] getMatches(){
-        return matches;
     }
     
     /**
@@ -165,9 +187,23 @@ public class Tracking {
         if(frame_2 != null){
             getHighestMatch(tracked,frame_2);//Stores the highest match in frame_2
             if(frame_1 != null){
-            
-            
             }
         }
     }
+    
+    /**
+     * Warns the <code>Tracking</code> object that changes might have occured and that it should check it's shape array.
+     * @param status the current status
+     */
+    public void warn(PatternDetector.CurrentDetectStatus status){
+        if(status == PatternDetector.CurrentDetectStatus.DETECTING_CHANGES_NOT_TRACKED){
+            analisisStatus = CurrentAnalisisStatus.REFRESH;
+            this.compareWithTemplate();
+        }else if(status == PatternDetector.CurrentDetectStatus.FINISHED){
+            analisisStatus = CurrentAnalisisStatus.RECYCLE;
+            this.compareWithTemplate();
+        }
+    }
+    
+    
 }

@@ -138,8 +138,6 @@ public class Frame {
         if (shapes.size() > 0 && trackedShapeIndex >= 0) {
             return shapes.get(trackedShapeIndex);
         }
-        System.out.println("[WARNING] Frame.getTrackedShape returned null, shapes.size() was " + shapes.size() + " and trackedShapesIndex was "
-                + trackedShapeIndex);
         return null;
     }
 }

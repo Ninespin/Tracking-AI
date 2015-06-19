@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
  * @author jeremi
  */
 public class FrameProcessor implements IImageProcessor{
+    
     private final Filter filter ;
     private final Display display;
     private final PatternDetector out;
@@ -26,10 +27,10 @@ public class FrameProcessor implements IImageProcessor{
         this.out = out;
     }
     
-    /*
-    returns a black and white image
-    the white portion is what matches 
-    */
+    /**
+     * returns a black and white image
+     * the white portion is what matches 
+     */
     public BufferedImage applyFilter(BufferedImage frame, Filter filter){
         int precision = (filter.getPrecision() < 0)? 0 : (filter.getPrecision() > 100)? 100 : filter.getPrecision();
         int[] _colorComp = {filter.getColor().getRed(),filter.getColor().getGreen(),filter.getColor().getBlue()};
@@ -80,10 +81,17 @@ public class FrameProcessor implements IImageProcessor{
         
     }
 
+    /**
+     * Called by a <code>FrameStream</code>, this method recieves a frame and processes it.
+     * @param frame the frame to process
+     */
     @Override
     public void process(Frame frame) {
         Frame f = new Frame (applyFilter(frame.getImage(),filter));
         f.setTrueImage(frame.getImage());
+        
+        out.nextFrame(f);
+        
         display.setFrame(f);
     }
 }

@@ -5,15 +5,12 @@
  */
 package UI;
 
-import Shapes.PatternDetector;
-import Shapes.Shape;
 import graphics.Frame;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.util.ConcurrentModificationException;
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
 import remote.controller.RemoteController;
@@ -33,7 +30,6 @@ public class Display extends JPanel implements Scrollable {
     private Thread th;
     private boolean running = true, paintOriginal = false, enphaciseOriginal = false,
             showMatchString = false;
-    PatternDetector p;
 
     private Tracking t;
 
@@ -79,14 +75,6 @@ public class Display extends JPanel implements Scrollable {
 
     public void setFrame(Frame _frame) {
         frame = _frame;
-        if (p != null) {
-            p.stop();
-        }
-        p = new PatternDetector(_frame);
-        p.detectShapes(null);
-        System.out.println("t" + t);
-        t.nextFrame(frame);//this motherfucker (t) is null... why?
-        //Shape match = t.getHighestMatch();
         invalidate();
         repaint();
     }
