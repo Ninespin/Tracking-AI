@@ -27,8 +27,13 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -38,45 +43,45 @@ public class ErrorMessage extends javax.swing.JDialog {
 
     private static final String SHOW_ERROR_TEXT = "Show Error";
     private static final String HIDE_ERROR_TEXT = "Hide Error";
-    
+
     JTextPane textPane;
-    
+
     /**
      * Creates new form ErrorMessage
+     *
      * @param parent
      * @param modal
      * @param message
      * @param title
      * @param error
      */
-    public ErrorMessage(java.awt.Frame parent, boolean modal,String message, String title, Exception error) {
+    public ErrorMessage(java.awt.Frame parent, boolean modal, String message, String title, Exception error) {
         super(parent, modal);
         initComponents();
-        
+
         textPane = new JTextPane();
         JPanel bufferPanel = new JPanel();
         bufferPanel.setLayout(new BorderLayout());
         bufferPanel.add(textPane);
         jScrollPane1.setViewportView(bufferPanel);
         jScrollPane1.setVisible(false);
-        
-        initMessages(title,message,error);
-        
+
+        initMessages(title, message, error);
+
         pack();
-        
+
         this.setLocationRelativeTo(parent);
     }
-    
-    private void initMessages(String title,String message, Exception error){
+
+    private void initMessages(String title, String message, Exception error) {
         this.setTitle(title);
         niceMessageLabel.setText(message);
-        
+
         StringWriter errors = new StringWriter();
         error.printStackTrace(new PrintWriter(errors));
         String s = errors.toString();
-        
+
         //s = s.replace("\n", "<br>");
-        
         textPane.setText(s);
     }
 
@@ -152,10 +157,10 @@ public class ErrorMessage extends javax.swing.JDialog {
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void showErrorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showErrorButtonActionPerformed
-        if(showErrorButton.getText().equals(SHOW_ERROR_TEXT)){
+        if (showErrorButton.getText().equals(SHOW_ERROR_TEXT)) {
             showErrorButton.setText(HIDE_ERROR_TEXT);
             jScrollPane1.setVisible(true);
-        }else{
+        } else {
             showErrorButton.setText(SHOW_ERROR_TEXT);
             jScrollPane1.setVisible(false);
         }
@@ -171,15 +176,27 @@ public class ErrorMessage extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * 
+     *
      * @param parent
      * @param message
      * @param title
-     * @param error 
+     * @param error
      */
-    public static  void sendMessage(Frame parent,String message, String title, Exception error){
-        ErrorMessage em = new ErrorMessage(parent, true, message, title, error);
-        em.setVisible(true);
+    public static void sendMessage(Frame parent, String message, String title, Exception error) {
+        Runnable r = () -> {
+            ErrorMessage em = new ErrorMessage(parent, true, message, title, error);
+            em.setVisible(true);
+        };
+
+        try {
+            if(!SwingUtilities.isEventDispatchThread()){
+                SwingUtilities.invokeAndWait(r);
+            }else{
+                r.run();
+            }
+        } catch (InterruptedException | InvocationTargetException ex) {
+            SwingUtilities.invokeLater(r);
+        }
     }
 
 }
