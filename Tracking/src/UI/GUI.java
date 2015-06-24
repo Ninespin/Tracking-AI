@@ -13,8 +13,11 @@ import Shapes.Template;
 import graphics.Filter;
 import graphics.FrameProcessor;
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -36,7 +39,7 @@ public class GUI extends javax.swing.JFrame {
     public static final String TEMPLATE_PATH_PREFIX = "Template Path : ";
     
     private String imagePath = "C:\\Users\\eloi\\Documents\\ArnaudDossiers\\Prog";
-    private String templatePath = "E:\\Documents\\ArnaudDossiers\\Prog\\Templates\\temp.jpg";
+    private String templatePath = "E:\\Documents\\ArnaudDossiers\\Prog\\Templates";
     private int updateRate = 1000;
     
     private RemoteController remote;
@@ -292,7 +295,15 @@ public class GUI extends javax.swing.JFrame {
     
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
         if(state == 0){state = 1;
-        
+            BufferedImage templateImage;
+            try{
+                templateImage = ImageIO.read(new File(templatePath));
+            } catch (IOException ex) {
+                //JOptionPane.showMessageDialog(this, "The template could not be loaded.");
+                ErrorMessage.sendMessage(this, "The template could not be loaded.", "Loading Error", ex);
+                return;
+            }
+            
             try {
                 if(remote.isConnected()){
                     fs = new FrameStream(remote);// <-- le serveur
@@ -307,7 +318,7 @@ public class GUI extends javax.swing.JFrame {
                 //TODO add options for this
                 Filter f = new Filter(Color.red,20);
                 //TODO pre-load template
-                Template temp = new Template(ImageIO.read(new File(templatePath)));
+                Template temp = new Template(templateImage);
                 
                 Tracking tracking = new Tracking(temp, fs);
                 PatternDetector patDet = new PatternDetector(null, tracking);
