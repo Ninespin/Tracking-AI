@@ -276,7 +276,7 @@ public class RemoteController extends javax.swing.JFrame implements WindowListen
     public void send(String s){
         if(server != null && server.getCurrentStatus() == Server.ServerStatus.FINE){
             server.write(s);
-            log(command.getText());
+            log(s);
             command.setText("");
         }
     }
