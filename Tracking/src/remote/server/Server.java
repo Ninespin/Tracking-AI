@@ -77,11 +77,15 @@ public class Server {
     }
 
     public void shutDown() {
-        pw.write("Q:");
-        pw.close();
-        try {
-            br.close();
-        } catch (IOException ex) {
+        if(pw != null){
+            pw.write("Q:");
+            pw.close();
+        }
+        if(br!=null){
+            try {
+                br.close();
+            } catch (IOException ex) {
+            }
         }
         running = false;
     }
