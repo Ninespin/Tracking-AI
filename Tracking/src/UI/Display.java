@@ -29,7 +29,7 @@ public class Display extends JPanel implements Scrollable {
 
     private Thread th;
     private boolean running = true, paintOriginal = false, enphaciseOriginal = false,
-            showMatchString = false;
+            showMatchString = false, autoResizeImage = false;
 
     private Tracking t;
 
@@ -39,8 +39,8 @@ public class Display extends JPanel implements Scrollable {
     private FramePainter painter;
 
     public Display() {
-        this.setSize(new Dimension(200, 200));
-        painter = new FramePainter(this.getWidth(), this.getHeight(), paintOriginal, enphaciseOriginal, showMatchString);
+        this.setSize(new Dimension(400, 400));
+        painter = new FramePainter(this.getWidth(), this.getHeight(), paintOriginal, enphaciseOriginal, showMatchString,autoResizeImage);
         th = new Thread(() -> {
             while (running) {
                 try {
@@ -107,6 +107,11 @@ public class Display extends JPanel implements Scrollable {
     public void setMatchStringVisible(boolean b) {
         showMatchString = b;
         painter.setShowMatchPercentage(showMatchString);
+    }
+
+    public void setAutoResizeImage(boolean autoResizeImage) {
+        this.autoResizeImage = autoResizeImage;
+        painter.setAutoResizeImage(autoResizeImage);
     }
 
     public DisplacementVector getLastVector() {

@@ -26,6 +26,7 @@ package UI;
 import Shapes.Shape;
 import graphics.Frame;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ConcurrentModificationException;
@@ -38,6 +39,8 @@ import tracking.DisplacementVector;
  */
 public class FramePainter {
 
+    private static final int FONT_SIZE_DEFAULT = 11;
+    
     private Color trackedShapeColor = Color.green;
     private Color genericShapeColor = Color.red;
     private Color emphasisColor = new Color(0, 0, 0, 0.75f);
@@ -53,47 +56,59 @@ public class FramePainter {
     private boolean showMatchPercentage;
     private boolean autoResizeImage;
 
-    public FramePainter(int width, int height, boolean paintBagkgroundImage, boolean paintEmphasizedImage, boolean showMatchPercentage) {
+    public FramePainter(int width, int height, boolean paintBagkgroundImage, boolean paintEmphasizedImage, boolean showMatchPercentage, boolean autoResizeImage) {
         this.width = width;
         this.height = height;
         this.paintBagkgroundImage = paintBagkgroundImage;
         this.paintEmphasizedShapes = paintEmphasizedImage;
         this.showMatchPercentage = showMatchPercentage;
+        this.autoResizeImage = autoResizeImage;
     }
 
     public void paintFrame(Frame f, DisplacementVector dv) {
         if (g != null) {
-            paintBackground(f);
-            paintDisplacementVector(dv);
-            paintFrameShapes(f);
+            
+            int w = autoResizeImage?width:f.getImage().getWidth();
+            int h = autoResizeImage?height:f.getImage().getHeight();
+            double scaleW = (w/(double)f.getImage().getWidth());
+            double scaleH = (h/(double)f.getImage().getHeight());
+            
+            paintBackground(f,w,h);
+            paintFrameShapes(f,scaleW,scaleH);
+            paintDisplacementVector(dv,scaleW,scaleH);
+            
         }
     }
 
-    private void paintBackground(Frame f) {
+    private void paintBackground(Frame f,int width, int height) {
         BufferedImage bgImage = paintBagkgroundImage ? f.getTrueImage() : f.getImage();
-        g.drawImage(bgImage, 0, 0, bgImage.getWidth(), bgImage.getHeight(), null);
+        g.drawImage(bgImage, 0, 0, width, height, null);
 
         if (paintBagkgroundImage && paintEmphasizedShapes) {
             g.setColor(emphasisColor);
-            g.fillRect(0, 0, bgImage.getWidth(), bgImage.getHeight());
+            g.fillRect(0, 0, width, height);
         }
     }
 
-    private void paintDisplacementVector(DisplacementVector dv) {
+    private void paintDisplacementVector(DisplacementVector dv,double scaleW, double scaleH) {
         if (dv != null) {
             g.setColor(displacementVectorColor);
-            g.drawRect(dv.getT1().getTruePos().x,
-                    dv.getT1().getTruePos().y,
-                    dv.getT1().getWidth(),
-                    dv.getT1().getHeight());
-            g.drawLine(dv.getDisplacement()[0].x,
-                    dv.getDisplacement()[0].y,
-                    dv.getDisplacement()[1].x,
-                    dv.getDisplacement()[1].y);
+            g.drawRect((int)(dv.getT1().getTruePos().x * scaleW),
+                    (int)(dv.getT1().getTruePos().y * scaleH),
+                    (int)(dv.getT1().getWidth() * scaleW),
+                    (int)(dv.getT1().getHeight() * scaleH));
+            g.drawLine((int)(dv.getDisplacement()[0].x * scaleW),
+                    (int)(dv.getDisplacement()[0].y * scaleH),
+                    (int)(dv.getDisplacement()[1].x * scaleW),
+                    (int)(dv.getDisplacement()[1].y * scaleH));
         }
     }
 
-    private void paintFrameShapes(Frame f) {
+    private void paintFrameShapes(Frame f,double scaleW, double scaleH) {
+        if(autoResizeImage){
+            int fontSize = (int)(FONT_SIZE_DEFAULT*scaleW);
+            g.setFont(new Font("Tahoma", Font.PLAIN, Math.max(9,fontSize)));
+        }
         try {
             g.setColor(genericShapeColor);
             for (int i = 0; i < f.getShapes().size(); i++) {
@@ -101,20 +116,33 @@ public class FramePainter {
                 
                 if (paintBagkgroundImage && paintEmphasizedShapes) {
                     g.drawImage(f.getTrueImage().getSubimage(s.getTruePos().x, s.getTruePos().y, s.getWidth(), s.getHeight()),
-                            s.getTruePos().x, s.getTruePos().y, s.getWidth(), s.getHeight(), null);
+                            (int)(s.getTruePos().x*scaleW),
+                            (int)(s.getTruePos().y*scaleH),
+                            (int)(s.getWidth()*scaleW),
+                            (int)(s.getHeight()*scaleH),
+                            null);
                 }
-                g.drawRect(s.getTruePos().x, s.getTruePos().y, s.getWidth(), s.getHeight());
-                g.drawLine(s.getCenter().x - s.getWidth() / 20, s.getCenter().y, s.getCenter().x + s.getWidth() / 20, s.getCenter().y);
-                g.drawLine(s.getCenter().x, s.getCenter().y - s.getHeight() / 20,
-                        s.getCenter().x, s.getCenter().y + s.getHeight() / 20);
-                g.drawString("" + i, s.getTruePos().x + 5, s.getTruePos().y + 10);
+                g.drawRect((int)(s.getTruePos().x*scaleW),
+                        (int)(s.getTruePos().y*scaleH),
+                        (int)(s.getWidth()*scaleW),
+                        (int)(s.getHeight()*scaleH));
+                g.drawLine((int)((s.getCenter().x - s.getWidth() / 20)*scaleW), (int)((s.getCenter().y)*scaleH), (int)((s.getCenter().x + s.getWidth() / 20)*scaleW), (int)(s.getCenter().y*scaleH));
+                g.drawLine((int)(s.getCenter().x*scaleW),
+                        (int)((s.getCenter().y - s.getHeight() / 20)*scaleH),
+                        (int)(s.getCenter().x*scaleW),
+                        (int)((s.getCenter().y + s.getHeight() / 20)*scaleH));
+                g.drawString("" + i,
+                        (int)((s.getTruePos().x)*scaleW) + g.getFontMetrics().charWidth(' '),
+                        (int)(s.getTruePos().y*scaleH) + g.getFontMetrics().getHeight());
                 if (f.isValidMatches()) {
                     String match = (f.getShapeMatch(i) * 100 < 10) ? "0" + (int) (f.getShapeMatch(i) * 100) : (int) (f.getShapeMatch(i) * 100) + "%";
                     if (showMatchPercentage) {
-                        g.drawString(match, (int) (s.getCenter().x - g.getFontMetrics().stringWidth(match) / 2),
-                                s.getTruePos().y - 10);
+                        g.drawString(match, 
+                                (int) (s.getCenter().x *scaleW) - g.getFontMetrics().stringWidth(match) / 2,
+                                (int) (s.getTruePos().y*scaleH) - g.getFontMetrics().getHeight());
                     }
                 }
+                System.out.println(g.getFont());
             }
         } catch (ConcurrentModificationException e) {
             //wait
@@ -124,10 +152,10 @@ public class FramePainter {
             Shape trackedShape = f.getTrackedShape();
             g.setColor(trackedShapeColor);
             if (trackedShape != null) {
-                g.drawRect(trackedShape.getTruePos().x,
-                        trackedShape.getTruePos().y,
-                        trackedShape.getWidth(),
-                        trackedShape.getHeight());
+                g.drawRect((int)(trackedShape.getTruePos().x*scaleW),
+                        (int)(trackedShape.getTruePos().y*scaleH),
+                        (int)(trackedShape.getWidth()*scaleW),
+                        (int)(trackedShape.getHeight()*scaleH));
             }
         }
     }
