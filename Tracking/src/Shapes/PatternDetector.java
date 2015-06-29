@@ -14,7 +14,7 @@ import java.util.List;
 import tracking.Tracking;
 
 /**
- *
+ * This class detects Shapes in a frame.
  * @author Jérémi Cyr & Arnaud Paré-Vogt
  */
 public class PatternDetector {
@@ -73,7 +73,7 @@ public class PatternDetector {
                 if (running && status == CurrentDetectStatus.NEW_FRAME) {
                     out.nextFrame(frame);
                     status = CurrentDetectStatus.DETECTING;
-                    detectShapeResult = detectShape(exclude, 0);
+                    detectShapeResult = detectShape(exclude, 0, 0);
                     status = CurrentDetectStatus.FINISHED;
                     out.warn(status);
                     exclude = null;
@@ -132,12 +132,12 @@ public class PatternDetector {
      * @return i do not honestly know, and i don't think it matters much
      */
     //TODO clean the massive code and fragment it for redability. Seriously, it is more than 100 lines long!
-    private boolean detectShape(ArrayList<Shape> exclude, int startY) {
+    private boolean detectShape(ArrayList<Shape> exclude, int startY, int startX) {
         if (exclude == null) {
-            exclude = new ArrayList<Shape>();
+            exclude = new ArrayList<>();
         }
         if (discarded == null) {
-            discarded = new ArrayList<Shape>();
+            discarded = new ArrayList<>();
         }
         int[] centerY = {-1, -1};//x,y
         int xMax, xMin, yMax, yMin;
@@ -257,9 +257,6 @@ public class PatternDetector {
                 }
             }
             Template t = new Template(templateVal);
-            if (this.checkIfTemplateExists(t, ERROR_MARGIN)) {
-                //write template    ---------------------------------------------------------------------------------------
-            }
 
             Point truepos = new Point(xMin, yMin);
             Shape s = new Shape(t, truepos);
@@ -268,10 +265,10 @@ public class PatternDetector {
                 addDetectedShape(s);
                 System.out.println(detectedShapes.size() + "=");
             } else {
-                discarded.add(s);
+                addToDiscarded(s);
             }
 
-            detectShape(detectedShapes, yPos);//call yourself until no more shapes
+            detectShape(detectedShapes, yPos,xPos);//call yourself until no more shapes
         } else {
             return true;
         }

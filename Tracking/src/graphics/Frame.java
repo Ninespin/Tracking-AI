@@ -23,6 +23,8 @@ public class Frame {
     private int trackedShapeIndex;
 
     private boolean validMatches;
+    
+    private boolean hasChangedSinceLastRepaint;
 
     /**
      * Crates a new frame, Containing the image <code>image</code>.
@@ -34,6 +36,7 @@ public class Frame {
         shapes = new LinkedList<>();
         trackedShapeIndex = -1;
         validMatches = false;
+        hasChangedSinceLastRepaint = true;
     }
 
     /**
@@ -55,6 +58,7 @@ public class Frame {
     }
 
     public void setTrueImage(BufferedImage i) {
+        hasChangedSinceLastRepaint = true;
         trueImage = i;
     }
 
@@ -66,6 +70,7 @@ public class Frame {
      */
     public void addShapes(Shape shape) {
         shapes.add(shape);
+        hasChangedSinceLastRepaint = true;
     }
 
     /**
@@ -86,6 +91,7 @@ public class Frame {
      */
     public void setTrackedShapeIndex(int i) {
         trackedShapeIndex = i;
+        hasChangedSinceLastRepaint = true;
     }
 
     /**
@@ -121,10 +127,12 @@ public class Frame {
         if (shapeIndex >= 0 && shapeIndex < shapes.size()) {
             shapes.get(shapeIndex).setMatch(shapeMatch);
         }
+        hasChangedSinceLastRepaint = true;
     }
 
     public void setValidMatches(boolean validMatches) {
         this.validMatches = validMatches;
+        hasChangedSinceLastRepaint = true;
     }
 
     public boolean isValidMatches() {
@@ -139,5 +147,27 @@ public class Frame {
             return shapes.get(trackedShapeIndex);
         }
         return null;
+    }
+
+    /**
+     * called to set the flag <code>hasChangedSinceLastRepaint</code> to false
+     */
+    public void repaint() {
+        this.hasChangedSinceLastRepaint = false;
+    }
+    
+    /**
+     * Says if the frame needs to be repainted.
+     * @return if the frame needs to be repainted
+     */
+    public boolean doesItNeedsRepaint(){
+        return hasChangedSinceLastRepaint;
+    }
+
+    /**
+     * Tells the frame that it needs to be repainted.
+     */
+    public void hasChangedSinceLastRepaint() {
+        this.hasChangedSinceLastRepaint = true;
     }
 }

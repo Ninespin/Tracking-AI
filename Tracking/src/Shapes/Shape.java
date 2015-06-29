@@ -19,7 +19,7 @@ public class Shape{
     private double match;
     
     public Shape(){
-        match = 0.0;
+        match = -1.0;
     }
     public Shape(Template _t, Point _truePos){
         this();

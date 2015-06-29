@@ -11,6 +11,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
 import remote.controller.RemoteController;
@@ -37,6 +38,8 @@ public class Display extends JPanel implements Scrollable {
     private RemoteController remote;
     
     private FramePainter painter;
+    
+    private BufferedImage lastImage;
 
     public Display() {
         this.setSize(new Dimension(400, 400));
@@ -81,37 +84,44 @@ public class Display extends JPanel implements Scrollable {
 
     @Override
     public void paintComponent(Graphics g) {
-        g = (Graphics2D) g;
-        g.setColor(Color.black);
-        g.fillRect(0, 0, this.getWidth(), this.getHeight());
-        painter.setGraphics(g);
-        if(frame != null){
-            painter.paintFrame(frame, t!=null ? t.getDisplacementVector() : null);
-        }else {
-            g.setColor(Color.yellow);
-            g.drawString("There is no frame to draw", this.getWidth() / 2 - (g.getFontMetrics().stringWidth("There is no frame to draw")) / 2, this.getHeight() / 2 - 6);
-        }
+            g = (Graphics2D) g;
+            g.setColor(Color.black);
+            g.fillRect(0, 0, this.getWidth(), this.getHeight());
+            if(frame != null){
+                if(lastImage==null || frame.doesItNeedsRepaint()){
+                    lastImage = painter.paintFrame(frame, t!=null ? t.getDisplacementVector() : null);
+                    frame.repaint();
+                }
+                g.drawImage(lastImage, 0, 0, null);
+            }else {
+                g.setColor(Color.yellow);
+                g.drawString("There is no frame to draw", this.getWidth() / 2 - (g.getFontMetrics().stringWidth("There is no frame to draw")) / 2, this.getHeight() / 2 - 6);
+            }
 
     }
 
     public void setPaintOriginal(boolean b) {
         paintOriginal = b;
         painter.setPaintBagkgroundImage(paintOriginal);
+        frame.hasChangedSinceLastRepaint();
     }
 
     public void setEmphasis(boolean b) {
         enphaciseOriginal = b;
         painter.setPaintEmphasizedShapes(enphaciseOriginal);
+        frame.hasChangedSinceLastRepaint();
     }
 
     public void setMatchStringVisible(boolean b) {
         showMatchString = b;
         painter.setShowMatchPercentage(showMatchString);
+        frame.hasChangedSinceLastRepaint();
     }
 
     public void setAutoResizeImage(boolean autoResizeImage) {
         this.autoResizeImage = autoResizeImage;
         painter.setAutoResizeImage(autoResizeImage);
+        frame.hasChangedSinceLastRepaint();
     }
 
     public DisplacementVector getLastVector() {

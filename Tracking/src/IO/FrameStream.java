@@ -40,7 +40,7 @@ import remote.controller.RemoteController;
  */
 public class FrameStream implements Runnable {
 
-    private static final String IMAGE_EXCTENTION = ".jpg";
+    private static final String IMAGE_EXCTENTION = ".JPG";
 
     private List<IImageProcessor> processors;
 
