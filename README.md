@@ -8,4 +8,4 @@ The application is supposed to be connected to a python script (running on a 'ra
 If you absolutely want to contribute, for some reason, this is what you can do:
 Contact us. (Or alternatively, simply fork the repository witch would be much better)
 
-Currently, the app is in a transitory state between plan 1.0 and plan 2.0, which makes it very unstable.
+Currently, the app is not able to detect the shapes fast enough. This is slowing down everything.
