@@ -71,7 +71,7 @@ public class Display extends JPanel implements Scrollable {
             Dimension d = new Dimension(frame.getImage().getWidth(), frame.getImage().getHeight());
             this.setMinimumSize(d);
             this.setPreferredSize(d);
-            invalidate();
+            revalidate();
             repaint();
         }
     }
