@@ -103,25 +103,25 @@ public class Display extends JPanel implements Scrollable {
     public void setPaintOriginal(boolean b) {
         paintOriginal = b;
         painter.setPaintBagkgroundImage(paintOriginal);
-        frame.hasChangedSinceLastRepaint();
+        if(frame!=null)frame.hasChangedSinceLastRepaint();
     }
 
     public void setEmphasis(boolean b) {
         enphaciseOriginal = b;
         painter.setPaintEmphasizedShapes(enphaciseOriginal);
-        frame.hasChangedSinceLastRepaint();
+        if(frame!=null)frame.hasChangedSinceLastRepaint();
     }
 
     public void setMatchStringVisible(boolean b) {
         showMatchString = b;
         painter.setShowMatchPercentage(showMatchString);
-        frame.hasChangedSinceLastRepaint();
+        if(frame!=null)frame.hasChangedSinceLastRepaint();
     }
 
     public void setAutoResizeImage(boolean autoResizeImage) {
         this.autoResizeImage = autoResizeImage;
         painter.setAutoResizeImage(autoResizeImage);
-        frame.hasChangedSinceLastRepaint();
+        if(frame!=null)frame.hasChangedSinceLastRepaint();
     }
 
     public DisplacementVector getLastVector() {

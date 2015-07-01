@@ -12,16 +12,23 @@ import Shapes.PatternDetector;
 import Shapes.Template;
 import graphics.Filter;
 import graphics.FrameProcessor;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.NumberFormat;
 import javax.imageio.ImageIO;
+import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.NumberFormatter;
 import remote.controller.RemoteController;
 import tracking.Tracking;
 
@@ -36,9 +43,11 @@ public class GUI extends javax.swing.JFrame {
     public static final String IMAGES_PATH_PREFIX = "Images Path : ";
     public static final String TEMPLATE_PATH_PREFIX = "Template Path : ";
     
-    private String imagePath = "C:\\Users\\eloi\\Documents\\ArnaudDossiers\\Prog";
+    private String imagePath = "E:\\Documents\\ArnaudDossiers\\Prog";
     private String templatePath = "E:\\Documents\\ArnaudDossiers\\Prog\\Templates\\temp.jpg";
     private int updateRate = 1000;
+    private Color filterColor = Color.red;
+    private int filterTolerance = 20;
     
     private RemoteController remote;
     
@@ -71,7 +80,8 @@ public class GUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "The config file could not be loaded. You may want to check the permissions/access you vave to the application's location.", "Config File load error", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        imagePath = conf.getStringParam("path", imagePath);
+        templatePath = conf.getStringParam("templatePath", templatePath);
+        imagePath = conf.getStringParam("imagePath", imagePath);
         updateRate = conf.getIntegerParam("millisecondsPerUpdate", updateRate);
         conf.write();
     }
@@ -111,6 +121,9 @@ public class GUI extends javax.swing.JFrame {
         paintTrueImgCheckBox = new javax.swing.JCheckBox();
         emphShapesCheckBox = new javax.swing.JCheckBox();
         autoResizeCheckBox = new javax.swing.JCheckBox();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        optionMenu = new javax.swing.JMenu();
+        optionConfigureFilter = new javax.swing.JMenuItem();
 
         jCheckBox1.setText("jCheckBox1");
 
@@ -262,6 +275,21 @@ public class GUI extends javax.swing.JFrame {
 
         jScrollPane3.setViewportView(jPanel2);
 
+        optionMenu.setText("Options");
+
+        optionConfigureFilter.setText("Configure Filter");
+        optionConfigureFilter.setToolTipText("Use this option if you want to configure how hte filter behaves");
+        optionConfigureFilter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                optionConfigureFilterActionPerformed(evt);
+            }
+        });
+        optionMenu.add(optionConfigureFilter);
+
+        jMenuBar1.add(optionMenu);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -287,7 +315,7 @@ public class GUI extends javax.swing.JFrame {
                     .addComponent(jScrollPane2)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
                 .addGap(22, 22, 22))
         );
 
@@ -295,7 +323,7 @@ public class GUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Called by the constructor just after teh components are initialysed
+     * Called by the constructor just after the components are initialysed
      */
     private void postInitComponents(){
         jScrollPane3.getVerticalScrollBar().setUnitIncrement(5);
@@ -333,8 +361,7 @@ public class GUI extends javax.swing.JFrame {
                         return;
                     }
                 }
-                //TODO add options for this
-                Filter f = new Filter(Color.red,20);
+                Filter f = new Filter(filterColor,filterTolerance);
                 //TODO pre-load template
                 Template temp = new Template(templateImage);
                 
@@ -407,27 +434,37 @@ public class GUI extends javax.swing.JFrame {
         display.refresh();
     }//GEN-LAST:event_autoResizeCheckBoxActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the System look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* sets the system look and fee;
-         */
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new GUI().setVisible(true);
-        });
+    private void optionConfigureFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionConfigureFilterActionPerformed
+        JPanel pan = new JPanel();
+        pan.setLayout(new BorderLayout());
         
-    }
+        JColorChooser cc = new JColorChooser(filterColor);
+        pan.add(cc,BorderLayout.PAGE_END);
+        
+        NumberFormat editFormat = NumberFormat.getIntegerInstance();
+        editFormat.setGroupingUsed(false);
+        NumberFormatter editFormatter = new NumberFormatter(editFormat);
+        editFormatter.setMaximum(100);
+        editFormatter.setMinimum(0);
+        
+        JFormattedTextField toleranceField = new JFormattedTextField(editFormatter);
+        toleranceField.setValue(filterTolerance);
+        toleranceField.addActionListener((e)->{cc.requestFocusInWindow();});
+        
+        JLabel description = new JLabel("Coose the tolerence and the color of the Filer");
+        JPanel cont = new JPanel(new GridLayout(2,1));
+        cont.add(description);
+        cont.add(toleranceField);
+        pan.add(cont,BorderLayout.PAGE_START);
+        
+        int i = JOptionPane.showConfirmDialog(this, pan, "Configure Filter", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if(i == JOptionPane.OK_OPTION){
+            filterColor = cc.getColor();
+            filterTolerance = (int)toleranceField.getValue();
+        }
+    }//GEN-LAST:event_optionConfigureFilterActionPerformed
 
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox autoResizeCheckBox;
     private javax.swing.JButton chooseButtonImagePath;
@@ -439,12 +476,15 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JCheckBox matchPercentCheckBox;
+    private javax.swing.JMenuItem optionConfigureFilter;
+    private javax.swing.JMenu optionMenu;
     private javax.swing.JCheckBox paintTrueImgCheckBox;
     private javax.swing.JLabel templatePathDisplay;
     // End of variables declaration//GEN-END:variables

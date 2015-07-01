@@ -1,4 +1,3 @@
-string path E:\Documents\ArnaudDossiers\Prog
-
-//the number of milliseconds between two updates
+string templatePath E:\Documents\ArnaudDossiers\Prog\Templates\temp.jpg
+string imagePath E:\Documents\ArnaudDossiers\Prog
 int millisecondsPerUpdate 1000

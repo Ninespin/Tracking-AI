@@ -31,6 +31,7 @@ public class FrameProcessor implements IImageProcessor{
      * returns a black and white image
      * the white portion is what matches 
      */
+    //TODO make the margin thing make sense : when it is 0 it is more tolerant than when it is 100!
     public BufferedImage applyFilter(BufferedImage frame, Filter filter){
         int precision = (filter.getPrecision() < 0)? 0 : (filter.getPrecision() > 100)? 100 : filter.getPrecision();
         int[] _colorComp = {filter.getColor().getRed(),filter.getColor().getGreen(),filter.getColor().getBlue()};
