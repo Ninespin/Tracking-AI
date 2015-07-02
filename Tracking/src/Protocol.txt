@@ -1,0 +1,6 @@
+PROTOCOL :
+(note - information messages or logic messages should all have the character ':' in them so that the server dosen't think it is an image)
+text		Description
+R:		expects an image to be returned in form of a base64 encoded string
+HI:		expects a 'HI:' to be returned as confirmaton (this is not final)
+M:		sends move information (this is not final)

@@ -315,7 +315,7 @@ public class RemoteController extends javax.swing.JFrame implements WindowListen
             return null;
         }
         try {
-            server.write("R:");
+            send("R:");
             while(isDone == false){
                 synchronized(this){
                     this.wait();
