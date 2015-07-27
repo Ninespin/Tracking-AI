@@ -29,6 +29,11 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import remote.utility.IStringListener;
 
 /**
@@ -41,7 +46,7 @@ public class Server {
 
     public enum ServerStatus {
 
-        FINE("Connected"), NO_CONNECTION("Not connected");
+        FINE("Connected"), NO_CONNECTION("Not connected"),TIMOUT_WAITING("Waiting for an answer...");
 
         String text;
 
@@ -55,19 +60,29 @@ public class Server {
         }
     }
 
-    int port;
-    Socket socket;
+    private int port;
+    private Socket socket;
 
-    BufferedReader br;
-    PrintWriter pw;
+    private long packetEleapsedTime = 0;//not usefull currently
+    /** The time the server takes to tieout in seconds*/
+    public static final long TIMOUT_TIME = 10;
+    private boolean rescievedReturnPacket = false;
+    boolean timeExceded;
+    /** for timing if the packets are returned in time */
+    private ScheduledExecutorService timoutTimer = Executors.newScheduledThreadPool(1);
+    
+    private BufferedReader br;
+    private PrintWriter pw;
 
-    ServerStatus currentStatus;
+    private ServerStatus currentStatus;
 
-    Thread socketListenerThread, messageListenerThread,refreshThread;
+    private Thread socketListenerThread, messageListenerThread,refreshThread;
 
-    IStringListener output;
+    private IStringListener output;
 
-    boolean running;
+    private boolean running;
+    
+    
 
     public Server(int port, IStringListener output) {
         this.port = port;
@@ -84,8 +99,7 @@ public class Server {
         if(br!=null){
             try {
                 br.close();
-            } catch (IOException ex) {
-            }
+            } catch (IOException ex) {}
         }
         running = false;
     }
@@ -99,12 +113,67 @@ public class Server {
                 }
             }
             listen();
+            startRefreshCycle();
         }, "SocketListener");
         socketListenerThread.start();
     }
     
-    private void refresh(){
+    private void startRefreshCycle(){
+        timeExceded = false;
         
+        final Runnable timer = ()->{
+            synchronized(this){
+                timeExceded = true;
+                this.notifyAll();
+            }
+        };
+        
+        Runnable r = ()->{
+            while(running){
+                this.write("HI:");
+                timoutTimer.schedule(timer, TIMOUT_TIME, TimeUnit.SECONDS);
+                while(!rescievedReturnPacket && !timeExceded){
+                    synchronized(this){
+                        try {
+                            this.wait();
+                        } catch (InterruptedException ex) {}
+                    }
+                }
+                if(rescievedReturnPacket){
+                    rescievedReturnPacket = false;
+                    this.currentStatus = ServerStatus.FINE;//we are good and responsive
+                    while(!timeExceded){//we wait the rest of the time, we do not want to overload the socket
+                        synchronized(this){
+                            try {
+                                this.wait();
+                            } catch (InterruptedException ex) {//if this happens it is probably because we shall stop.
+                                timeExceded = true;
+                                break;
+                            }
+                        }
+                    }
+                    timeExceded = false;
+                }else if(timeExceded){//this is bad!
+                    this.currentStatus = ServerStatus.TIMOUT_WAITING;
+                    timeExceded = false;
+                    while(!rescievedReturnPacket){//we wait for the packet to come
+                        synchronized(this){
+                            try {
+                                this.wait();
+                            } catch (InterruptedException ex) {//if we are interrupted it is probably the the program wants us to stop.
+                                rescievedReturnPacket = true;
+                                break;
+                            }
+                        }
+                    }
+                    rescievedReturnPacket = true;
+                    this.currentStatus = ServerStatus.FINE;//we are responsive again! :)
+                }
+            }
+        };
+        
+        refreshThread = new Thread(r, "Timout checker thread.");
+        refreshThread.start();
     }
 
     private void generateSocket() throws IOException {
@@ -116,7 +185,9 @@ public class Server {
     }
 
     public void write(String s) {
-        pw.println(s);
+        synchronized(pw){
+            pw.println(s);
+        }
     }
 
     public void listen() {
@@ -125,7 +196,17 @@ public class Server {
                 try {
                     if(br.ready()){
                         String s = br.readLine();
-                        output.stringRecieved(s);
+                        System.out.println(s);
+                        if(s.startsWith("Q:")){
+                            shutDown();
+                        }else if (s.startsWith("HI:")){
+                            rescievedReturnPacket = true;
+                            synchronized(this){
+                                this.notifyAll();
+                            }
+                        }else{
+                            output.stringRecieved(s);
+                        }
                     }else{
                         try {
                             Thread.sleep(1000);

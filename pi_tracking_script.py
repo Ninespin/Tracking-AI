@@ -4,16 +4,23 @@ import threading
 import time,datetime
 import sys,os,subprocess,traceback
 import base64
-import RPi.GPIO as GPIO
 
-
-
+#loading GPIO
+usingGPIO = False
+try :
+    import RPi.GPIO as GPIO
+except ImportError :
+    userIn = input("No GPIO found. Do you want to run a developpement version? (y/n)")
+    if userIn != "y" :
+        sys.exit(0);
+        usingGPIO = True
+#
 
 #socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s_i = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 port = 28015
-host = "192.168.0.145"#"70.24.238.226"
+host = "127.0.0.1"#"192.168.0.145"#"70.24.238.226"
 server = (host,port)
 try:
     s.connect(server)
@@ -21,18 +28,21 @@ try:
 except:
     print("Connection Failed:")
     print(traceback.format_exc())
+    userIn =input("press ENTER to exit");
+    sys.exit(0);
 else:
     s.send("Connected!\n".encode('ascii'))
     print("connected!")
 #
 
-#GPIO
-GPIO.setmode(GPIO.BOARD)
-impulsetime = 0.1
-pins = (11,13,16,18)
-motors = {"m1":(pins[0],pins[1]),"m2":(pins[2],pins[3])}
-current_motor_pos = ((0,0),(0,0))
 
+#GPIO
+if usingGPIO :
+    GPIO.setmode(GPIO.BOARD)
+    impulsetime = 0.1
+    pins = (11,13,16,18)
+    motors = {"m1":(pins[0],pins[1]),"m2":(pins[2],pins[3])}
+    current_motor_pos = ((0,0),(0,0))
 #
 
 
@@ -45,35 +55,36 @@ def getimage_as_data(path):
 
 ##GPIO
 def reset_pins():
-    
-    try:
-        GPIO.setup(11, GPIO.OUT)
-        GPIO.setup(13, GPIO.OUT)
-        GPIO.setup(18, GPIO.OUT)
-        GPIO.setup(16, GPIO.OUT)
-        GPIO.output(13, False)
-        GPIO.output(11, False)
-        GPIO.output(16, False)
-        GPIO.output(18,False)
-    except:
-        print("Error while reseting pins, exiting.")
-        s.send(str("[ERRORLOG]\n----------------\n"+traceback.format_exc()+"\n----------------").encode('ascii'))
-        _exit()
-    else:
-        print("Pins "+str(pins)+" all resetted correctly.")
-        s.send("[PIN REPPORT] All pins have benn reset\n")
+    if usingGPIO :
+        try:
+            GPIO.setup(11, GPIO.OUT)
+            GPIO.setup(13, GPIO.OUT)
+            GPIO.setup(18, GPIO.OUT)
+            GPIO.setup(16, GPIO.OUT)
+            GPIO.output(13, False)
+            GPIO.output(11, False)
+            GPIO.output(16, False)
+            GPIO.output(18,False)
+        except:
+            print("Error while reseting pins, exiting.")
+            s.send(str("[ERRORLOG]\n----------------\n"+traceback.format_exc()+"\n----------------").encode('ascii'))
+            _exit()
+        else:
+            print("Pins "+str(pins)+" all resetted correctly.")
+            s.send("[PIN REPPORT] All pins have benn reset\n")
 
 def movemotor1(m1):
     m1 = float(m1)
     try:
-        if m1 < 0:
-            GPIO.output(motors["m1"][1],True)
-            time.sleep(abs(m1))#to do
-            GPIO.output(motors["m1"][1],False)
-        else:
-            GPIO.output(motors["m1"][0],True)
-            time.sleep(abs(m1))
-            GPIO.output(motors["m1"][0],False)
+        if usingGPIO :
+            if m1 < 0:
+                GPIO.output(motors["m1"][1],True)
+                time.sleep(abs(m1))#to do
+                GPIO.output(motors["m1"][1],False)
+            else:
+                GPIO.output(motors["m1"][0],True)
+                time.sleep(abs(m1))
+                GPIO.output(motors["m1"][0],False)
     except :
         print("Error while moving motor1. Did not move them.")
         msg = "[ERRORLOG]\n----------------\n"+traceback.format_exc()+"\n----------------"
@@ -84,14 +95,15 @@ def movemotor1(m1):
 def movemotor2(m2):
     m2 = float(m2)
     try:
-        if m2 < 0:
-            GPIO.output(motors["m2"][1],True)
-            time.sleep(abs(m2))
-            GPIO.output(motors["m2"][1],False)
-        else:
-            GPIO.output(motors["m2"][0],True)
-            time.sleep(abs(m2))
-            GPIO.output(motors["m2"][0],False)
+        if usingGPIO :
+            if m2 < 0:
+                GPIO.output(motors["m2"][1],True)
+                time.sleep(abs(m2))
+                GPIO.output(motors["m2"][1],False)
+            else:
+                GPIO.output(motors["m2"][0],True)
+                time.sleep(abs(m2))
+                GPIO.output(motors["m2"][0],False)
     except :
         print("Error while moving motor2. Did not move them.")
         msg = "[ERRORLOG]\n----------------\n"+traceback.format_exc()+"\n----------------"
@@ -106,7 +118,8 @@ def _exit():
     s.send("\nExiting\n".encode('ascii'))
     try:
         s.close()
-        GPIO.cleanup()
+        if usingGPIO :
+            GPIO.cleanup()
     except:
         pass
     sys.exit(0)
@@ -149,6 +162,9 @@ while True:
                 #read and send
                 s_i.send((base64.b64encode(getimage_as_data(path))+"\n").encode('ascii'))
                 print("Image sent")
+        elif rec_array[0] == "HI":
+            print("\tConnectivity test paket rescived.")
+            s.send("HI:\n".encode('ascii'))#used for testing connectivity
         else:
             print("[Server:]"+received)
             

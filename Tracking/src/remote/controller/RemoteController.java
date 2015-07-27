@@ -7,12 +7,15 @@ package remote.controller;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.awt.event.WindowStateListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Base64;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
 import javax.swing.JFormattedTextField.AbstractFormatterFactory;
 import javax.swing.text.DefaultFormatterFactory;
@@ -23,15 +26,20 @@ import remote.server.Server;
  *
  * @author Arnaud Paré-Vogt
  */
-public class RemoteController extends javax.swing.JFrame implements WindowListener{
-    
+public class RemoteController extends javax.swing.JFrame implements WindowListener {
+
     private Server server;
     private Server iServer;
-    NumberFormat nfInteger;
-    AbstractFormatterFactory integerFormatter;
-    
+    private NumberFormat nfInteger;
+    private AbstractFormatterFactory integerFormatter;
+
     private boolean isDone = false;
     private BufferedImage image;
+
+    private int refreshRate = 1;
+    
+    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private ScheduledFuture<?> refresher;
     
     /**
      * Creates new form RemoteController
@@ -41,20 +49,20 @@ public class RemoteController extends javax.swing.JFrame implements WindowListen
         initFormats();
         this.addWindowListener(this);
     }
-    
-    private void initFormats(){
+
+    private void initFormats() {
         nfInteger = NumberFormat.getIntegerInstance();
         NumberFormatter nf = new NumberFormatter(nfInteger);
         nf.setMaximum(Server.MAX_PORT_INDEX);
         nf.setMinimum(0);
-        
+
         NumberFormat editFormat = NumberFormat.getIntegerInstance();
         editFormat.setGroupingUsed(false);
         NumberFormatter editFormatter = new NumberFormatter(editFormat);
         editFormatter.setMaximum(Server.MAX_PORT_INDEX);
         editFormatter.setMinimum(0);
-        
-        integerFormatter = new DefaultFormatterFactory(nf,nf,editFormatter,nf);
+
+        integerFormatter = new DefaultFormatterFactory(nf, nf, editFormatter, nf);
         port.setFormatterFactory(integerFormatter);
         port.setValue(28015);
         refreshFrequency.setFormatterFactory(integerFormatter);
@@ -107,6 +115,11 @@ public class RemoteController extends javax.swing.JFrame implements WindowListen
         lRefreshFrequency.setText("Refresh frequency (ticks/s) :");
 
         refreshFrequency.setText("1");
+        refreshFrequency.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshFrequencyActionPerformed(evt);
+            }
+        });
 
         lCommand.setText("Command :");
 
@@ -213,30 +226,34 @@ public class RemoteController extends javax.swing.JFrame implements WindowListen
     }// </editor-fold>//GEN-END:initComponents
 
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
-        try {
-            server = new Server((int)(port.getValue()),(s)->{
+        if (server == null) {
+            server = new Server((int) (port.getValue()), (s) -> {
                 log(s);
             });
             /*iServer = new ImageServer((int)(port.getValue())+1,(s)->{
-                imageDisplay.setImage(s);
-            });*/
-            iServer = new Server((int)(port.getValue())+1,(s)->{
+             imageDisplay.setImage(s);
+             });*/
+            iServer = new Server((int) (port.getValue()) + 1, (s) -> {
                 try {
                     byte[] bytes = Base64.getDecoder().decode(s);
                     BufferedImage img = ImageIO.read(new ByteArrayInputStream(bytes));
-                    
+
                     imageDisplay.setImage(img);
-                    
+
                     this.image = img;
                     isDone = true;
-                    synchronized(this){
+                    synchronized (this) {
                         this.notifyAll();
                     }
-                } catch (IOException ex) {}
+                } catch (IOException ex) {
+                    System.out.println("The image could not be read!");
+                }
             });
             server.listenForConnection();
             iServer.listenForConnection();
-        } catch (NullPointerException ex) {}
+            startRefresh();
+            this.connectButton.setEnabled(false);
+        }
         refresh();
     }//GEN-LAST:event_connectButtonActionPerformed
 
@@ -256,72 +273,70 @@ public class RemoteController extends javax.swing.JFrame implements WindowListen
         refresh();
     }//GEN-LAST:event_updateButtonActionPerformed
 
-    public void log(String s){
-        log.append(s+"\n");
+    private void refreshFrequencyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshFrequencyActionPerformed
+        setRefreshFrequency((int)refreshFrequency.getValue());
+    }//GEN-LAST:event_refreshFrequencyActionPerformed
+
+    private void setRefreshFrequency(int freq){
+        this.refreshRate = 1000/freq;
+        stopRefresh();
+        startRefresh();
     }
     
-    public void refresh(){
-        if(server != null){
-            lStatus.setText(server.getStatus());
+    private void startRefresh(){
+        refresher = scheduler.scheduleAtFixedRate(()->{refresh();}, refreshRate, refreshRate, TimeUnit.MILLISECONDS);
+    }
+    
+    private void stopRefresh(){
+        refresher.cancel(true);
+    }
+    
+    public void log(String s) {
+        log.append(s + "\n");
+    }
+
+    public void refresh() {
+        synchronized(server){
+            if (server != null) {
+                lStatus.setText(server.getStatus());
+            }
         }
     }
-    
-    public void send(){
-        if(server != null && server.getCurrentStatus() == Server.ServerStatus.FINE){
+
+    public void send() {
+        if (server != null && server.getCurrentStatus() == Server.ServerStatus.FINE) {
             server.write(command.getText());
             log(command.getText());
             command.setText("");
         }
     }
-    public void send(String s){
-        if(server != null && server.getCurrentStatus() == Server.ServerStatus.FINE){
+
+    public void send(String s) {
+        if (server != null && server.getCurrentStatus() == Server.ServerStatus.FINE) {
             server.write(s);
             log(s);
             command.setText("");
         }
     }
-    
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the System look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RemoteController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new RemoteController().setVisible(true);
-            }
-        });
+    public boolean isConnected() {
+        return (server != null) && (iServer != null) && (server.getCurrentStatus() == Server.ServerStatus.FINE) && (iServer.getCurrentStatus() == Server.ServerStatus.FINE);
     }
-    
-    
-    public boolean isConnected(){
-        return (server!=null)&&(iServer!=null)&&(server.getCurrentStatus()==Server.ServerStatus.FINE)&&(iServer.getCurrentStatus()==Server.ServerStatus.FINE);
-    }
-    
-    public BufferedImage getImage(){
-        if(server.getCurrentStatus() != Server.ServerStatus.FINE || iServer.getCurrentStatus() != Server.ServerStatus.FINE){
+
+    public BufferedImage getImage() {
+        if (server.getCurrentStatus() != Server.ServerStatus.FINE || iServer.getCurrentStatus() != Server.ServerStatus.FINE) {
             return null;
         }
         try {
             send("R:");
-            while(isDone == false){
-                synchronized(this){
+            while (isDone == false) {
+                synchronized (this) {
                     this.wait();
                 }
             }
-        } catch (InterruptedException ex) {System.out.println(ex+" at Rcontroller");}
+        } catch (InterruptedException ex) {
+            System.out.println(ex + " at Rcontroller");
+        }
         isDone = false;
         return image;
     }
@@ -342,7 +357,6 @@ public class RemoteController extends javax.swing.JFrame implements WindowListen
     private javax.swing.JButton updateButton;
     // End of variables declaration//GEN-END:variables
 
-
     @Override
     public void windowOpened(WindowEvent we) {
     }
@@ -350,7 +364,7 @@ public class RemoteController extends javax.swing.JFrame implements WindowListen
     @Override
     public void windowClosing(WindowEvent we) {
         stop();
-        
+
     }
 
     @Override
@@ -373,12 +387,12 @@ public class RemoteController extends javax.swing.JFrame implements WindowListen
     @Override
     public void windowDeactivated(WindowEvent we) {
     }
-    
-    public void stop(){
-        if(server!= null){
+
+    public void stop() {
+        if (server != null) {
             server.shutDown();
         }
-        if(iServer!=null){
+        if (iServer != null) {
             iServer.shutDown();
         }
     }
