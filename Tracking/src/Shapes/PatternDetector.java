@@ -19,19 +19,16 @@ import tracking.Tracking;
  */
 public class PatternDetector {
 
-    private ArrayList<Shape> detectedShapes;
+    private final ArrayList<Shape> detectedShapes;
     private Frame frame;
-    private final int ERROR_MARGIN = 25;//in %
     private final int SMALLSHAPE_FACTOR = 10001;
 
     private ArrayList<Shape> exclude, discarded;
-    private boolean detectShapeResult = true;
-    private boolean detecting = false;
 
     private Thread mainThread;
     private boolean running = true;
 
-    private Tracking out;
+    private final Tracking out;
     private CurrentDetectStatus status;
 
     public enum CurrentDetectStatus {
@@ -62,18 +59,19 @@ public class PatternDetector {
     private void initThreads() {
         mainThread = new Thread(() -> {
             while (running) {
-                synchronized (mainThread) {
+                synchronized (this) {
                     try {
                         while(status != CurrentDetectStatus.NEW_FRAME && running){
-                            mainThread.wait();
+                            this.wait();
                         }
-                    } catch (InterruptedException ex) {
+                    } catch (InterruptedException ex) {//we got interrupted! Hopefully the guy interrupting set something to happen using the states. 
+                        continue;//well we still end up exiting. Hopefully the interrupted has nothing to do with the current status
                     }
                 }
                 if (running && status == CurrentDetectStatus.NEW_FRAME) {
                     out.nextFrame(frame);
                     status = CurrentDetectStatus.DETECTING;
-                    detectShapeResult = detectShape(exclude, 0, 0);
+                    detectShape(exclude, 0, 0);
                     status = CurrentDetectStatus.FINISHED;
                     out.warn(status);
                     exclude = null;
@@ -91,8 +89,8 @@ public class PatternDetector {
      */
     public void stop() {
         running = false;
-        synchronized (mainThread) {
-            mainThread.notifyAll();
+        synchronized (this) {
+            this.notifyAll();
         }
     }
 
@@ -116,8 +114,8 @@ public class PatternDetector {
         } else if(status == CurrentDetectStatus.NEW_FRAME) {
             //System.out.println("process!");
             this.exclude = exclude;
-            synchronized (mainThread) {
-                mainThread.notifyAll();
+            synchronized (this) {
+                this.notifyAll();
             }
             return false;
         }
@@ -129,7 +127,7 @@ public class PatternDetector {
      *
      * @param exclude the shapes to exclude
      * @param startY the current y coordinate (this method is recursive)
-     * @return i do not honestly know, and i don't think it matters much
+     * @return I do not honestly know, and I don't think it matters much
      */
     //TODO clean the massive code and fragment it for redability. Seriously, it is more than 100 lines long!
     private boolean detectShape(ArrayList<Shape> exclude, int startY, int startX) {
