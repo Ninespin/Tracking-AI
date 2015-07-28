@@ -14,6 +14,7 @@ import graphics.Filter;
 import graphics.FrameProcessor;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -124,12 +125,14 @@ public class GUI extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         optionMenu = new javax.swing.JMenu();
         optionConfigureFilter = new javax.swing.JMenuItem();
+        optionOpenConfig = new javax.swing.JMenuItem();
 
         jCheckBox1.setText("jCheckBox1");
 
         jCheckBox2.setText("jCheckBox2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Tracking-AI");
 
         goButton.setText("GO!");
         goButton.addActionListener(new java.awt.event.ActionListener() {
@@ -286,6 +289,15 @@ public class GUI extends javax.swing.JFrame {
         });
         optionMenu.add(optionConfigureFilter);
 
+        optionOpenConfig.setText("Open Configuration File");
+        optionOpenConfig.setToolTipText("Opens the configuration file for editing variables.");
+        optionOpenConfig.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                optionOpenConfigActionPerformed(evt);
+            }
+        });
+        optionMenu.add(optionOpenConfig);
+
         jMenuBar1.add(optionMenu);
 
         setJMenuBar(jMenuBar1);
@@ -341,6 +353,7 @@ public class GUI extends javax.swing.JFrame {
     
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
         if(state == 0){
+            //load the template
             BufferedImage templateImage;
             try{
                 templateImage = ImageIO.read(new File(templatePath));
@@ -349,6 +362,7 @@ public class GUI extends javax.swing.JFrame {
                 ErrorMessage.sendMessage(this, "The template could not be loaded.", "Loading Error", ex);
                 return;
             }
+            //
             
             try {
                 if(remote.isConnected()){
@@ -464,6 +478,14 @@ public class GUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_optionConfigureFilterActionPerformed
 
+    private void optionOpenConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionOpenConfigActionPerformed
+        try {
+            Desktop.getDesktop().open(new File(CONFIG_FILE_PATH));
+        } catch (IOException ex) {
+            ErrorMessage.sendMessage(this, "The configuration file could not be opened. Try opening it manually.", "Error", ex);
+        }
+    }//GEN-LAST:event_optionOpenConfigActionPerformed
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox autoResizeCheckBox;
@@ -485,6 +507,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JCheckBox matchPercentCheckBox;
     private javax.swing.JMenuItem optionConfigureFilter;
     private javax.swing.JMenu optionMenu;
+    private javax.swing.JMenuItem optionOpenConfig;
     private javax.swing.JCheckBox paintTrueImgCheckBox;
     private javax.swing.JLabel templatePathDisplay;
     // End of variables declaration//GEN-END:variables

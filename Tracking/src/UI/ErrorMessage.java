@@ -176,11 +176,11 @@ public class ErrorMessage extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     /**
-     *
-     * @param parent
-     * @param message
-     * @param title
-     * @param error
+     * Shows a nice display for errors in a JDialog
+     * @param parent the parent frame
+     * @param message the error message (this should be understandable by most users)
+     * @param title the title of the error message frame
+     * @param error an exception that can optionally be viewed by the user.
      */
     public static void sendMessage(Frame parent, String message, String title, Exception error) {
         Runnable r = () -> {
