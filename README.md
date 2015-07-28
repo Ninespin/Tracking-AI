@@ -8,4 +8,8 @@ The application is supposed to be connected to a python script (running on a 'ra
 If you absolutely want to contribute, for some reason, this is what you can do:
 Contact us. (Or alternatively, simply fork the repository witch would be much better)
 
-Currently, the app is not able to detect the shapes fast enough. This is slowing down everything.
+Stuf to do :
+ - Currently, the app is not able to detect the shapes fast enough. This is slowing down everything;
+ - The motor movement is not working at all, and we need a shema for a robot that we could build;
+ - The java swing-gui is horrible (ok it isn't that bad), we need to replace it with a cooler one : JavaFX;
+
