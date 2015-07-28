@@ -362,6 +362,7 @@ public class GUI extends javax.swing.JFrame {
                 ErrorMessage.sendMessage(this, "The template could not be loaded.", "Loading Error", ex);
                 return;
             }
+            Template temp = new Template(templateImage);
             //
             
             try {
@@ -376,8 +377,6 @@ public class GUI extends javax.swing.JFrame {
                     }
                 }
                 Filter f = new Filter(filterColor,filterTolerance);
-                //TODO pre-load template
-                Template temp = new Template(templateImage);
                 
                 Tracking tracking = new Tracking(temp, fs);
                 PatternDetector patDet = new PatternDetector(null, tracking);

@@ -180,7 +180,7 @@ public class Tracking {
     public void nextFrame(Frame f) {
         frame_1 = frame_2;
         if (frame_2 == null) {
-            System.out.println("null2 bitch");
+            //System.out.println("null2 bitch");
         }
         frame_2 = f;
     }

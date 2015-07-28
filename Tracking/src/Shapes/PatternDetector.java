@@ -114,7 +114,7 @@ public class PatternDetector {
         } else if(status == CurrentDetectStatus.FINISHED){
             return true;
         } else if(status == CurrentDetectStatus.NEW_FRAME) {
-            System.out.println("process!");
+            //System.out.println("process!");
             this.exclude = exclude;
             synchronized (mainThread) {
                 mainThread.notifyAll();
@@ -144,7 +144,7 @@ public class PatternDetector {
         boolean x0Stop = false, x1Stop = false, y1Stop = false;
 
         int xPos = 0, yPos = 0;
-        System.out.println("Looking...");
+        //System.out.println("Looking...");
         //first encounter  ** missing -> check if point is in not exclude
         for (yPos = startY; yPos < frame.getImage().getHeight(); yPos++) {
             for (xPos = 0; xPos < frame.getImage().getWidth(); xPos++) {
@@ -177,7 +177,7 @@ public class PatternDetector {
                 break;
             }
         }
-        System.out.println("Found!");
+        //System.out.println("Found!");
         if (centerY[0] > -1 && centerY[1] > -1) {
             yMax = centerY[1] + 1;
             yMin = centerY[1];
@@ -249,7 +249,7 @@ public class PatternDetector {
                     }
                 }
             } while (!x0Stop || !x1Stop || !y1Stop);
-            System.out.println("shape at (" + xMin + "," + yMin + ") (" + xMax + "," + yMax + ")");
+            //System.out.println("shape at (" + xMin + "," + yMin + ") (" + xMax + "," + yMax + ")");
             int[][] templateVal = new int[yMax - yMin][xMax - xMin];//get the value of shape
             for (int i = yMin; i < yMax; i++) {
                 for (int j = xMin; j < xMax; j++) {
@@ -263,7 +263,7 @@ public class PatternDetector {
             if (s.getWidth() * s.getHeight() > frame.getImage().getWidth() * frame.getImage().getHeight() / SMALLSHAPE_FACTOR) {
                 //we add a shape
                 addDetectedShape(s);
-                System.out.println(detectedShapes.size() + "=");
+                //System.out.println(detectedShapes.size() + "=");
             } else {
                 addToDiscarded(s);
             }

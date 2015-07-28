@@ -144,7 +144,7 @@ public class FramePainter {
                                 (int) (s.getTruePos().y * scaleH) - g.getFontMetrics().getHeight());
                     }
                 }
-                System.out.println(g.getFont());
+                //System.out.println(g.getFont());
             }
         } catch (ConcurrentModificationException e) {
             //wait
