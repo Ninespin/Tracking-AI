@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Arnaud Paré-Vogt.
+ * Copyright 2015 Eloi.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,29 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package init;
+package UI.fx;
 
-import UI.fx.GUIFX;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 /**
- * Class that takes care of initialysing the project. Also declares a bunch of constants.
+ *
  * @author Arnaud Paré-Vogt
  */
-public class Init {
+public class GUIFX extends Application {
     
-    public static void main(String[] args){
-        /*
+    
+    private Stage primaryStage;
+    Button btn;
+    
+    @Override
+    public void start(Stage primaryStage) {
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            this.primaryStage = primaryStage;
+            primaryStage.setTitle("Tracking-AI looking cool :)");
+            
+            Parent root = FXMLLoader.load(getClass().getResource("FXMLMainGui.fxml"));
+            
+            Scene scene = new Scene(root);
+            
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(GUIFX.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        java.awt.EventQueue.invokeLater(() -> {
-            new GUI().setVisible(true);
-        });
-        */
-        GUIFX.init(args);
+    }
+    
+    public static void init(String[] args){
+        launch(args);
     }
     
 }

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Arnaud Paré-Vogt.
+ * Copyright 2015 Eloi.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,29 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package init;
+package UI.fx.controller;
 
-import UI.fx.GUIFX;
+import java.net.URL;
+import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 
 /**
- * Class that takes care of initialysing the project. Also declares a bunch of constants.
+ * FXML Controller class
+ *
  * @author Arnaud Paré-Vogt
  */
-public class Init {
+public class FXMLMainGuiController implements Initializable {
+
+    public Button testNumber;
     
-    public static void main(String[] args){
-        /*
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
+    /**
+     * Initializes the controller class.
+     */
+    @FXML
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        assert testNumber != null : "The field 'clickMeButton' was not injected properly!";
         
-        java.awt.EventQueue.invokeLater(() -> {
-            new GUI().setVisible(true);
+        testNumber.setOnAction((ActionEvent ae)->{
+            System.out.println("Test");
         });
-        */
-        GUIFX.init(args);
+        
     }
     
 }
