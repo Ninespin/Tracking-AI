@@ -23,48 +23,54 @@
  */
 package UI.fx;
 
+import UI.fx.controller.FXMLMainGuiController;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  *
  * @author Arnaud Paré-Vogt
  */
 public class GUIFX extends Application {
-    
-    
+
     private Stage primaryStage;
-    Button btn;
-    
+
     @Override
     public void start(Stage primaryStage) {
         try {
             this.primaryStage = primaryStage;
             primaryStage.setTitle("Tracking-AI looking cool :)");
             
-            Parent root = FXMLLoader.load(getClass().getResource("FXMLMainGui.fxml"));
+            //TODO make the frame look coooler
+            primaryStage.initStyle(StageStyle.DECORATED);
             
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLMainGui.fxml"));
+
+            Parent root = loader.load();
+            FXMLMainGuiController controller = loader.getController();
+            primaryStage.setOnCloseRequest((e) -> {
+                controller.closeProgram();
+            });
+
             Scene scene = new Scene(root);
-            
+
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (IOException ex) {
             Logger.getLogger(GUIFX.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public static void init(String[] args){
+
+    public static void init(String[] args) {
         launch(args);
     }
-    
+
 }

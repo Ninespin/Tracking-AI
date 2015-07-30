@@ -31,6 +31,12 @@ public class Tracking {
 
     private boolean running = true;
 
+    /**
+     * Instantiates a new instance of tracking class.
+     * @see plan2.0.png
+     * @param tracked The template that is goin
+     * @param fs 
+     */
     public Tracking(Template tracked, FrameStream fs) {
         this.tracked = tracked;
         initThread();
