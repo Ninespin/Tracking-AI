@@ -34,6 +34,7 @@ import application.TrackingAIController;
 import java.io.File;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -59,15 +60,13 @@ public class FXMLMainGuiController implements Initializable {
     @FXML
     private Label imagePathLabel;
 
-    
-    
     private TrackingAIController controller;
 
     private Stage primaryStage;
 
     private final String TEMPLATE_PATH_PREFIX = "Template Path : ";
     private final String IMAGE_PATH_PREFIX = "Image Path : ";
-    
+
     /**
      * Initializes the controller class.
      */
@@ -87,9 +86,9 @@ public class FXMLMainGuiController implements Initializable {
         chooseTemplateButton.setOnAction((ActionEvent ae) -> {
             chooseTemplateButtonAction(ae);
         });
-        
-        chooseImageButton.setOnAction((ActionEvent ae)->{
-            
+
+        chooseImageButton.setOnAction((ActionEvent ae) -> {
+            chooseImageButtonAction(ae);
         });
     }
 
@@ -128,6 +127,16 @@ public class FXMLMainGuiController implements Initializable {
         if (selectedFile != null) {
             controller.setTemplatePath(selectedFile.getPath());
             templatePathLabel.setText(TEMPLATE_PATH_PREFIX + selectedFile.getPath());
+        }
+    }
+
+    private void chooseImageButtonAction(ActionEvent ae) {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Select folder containing images");
+        File selectedDirectory = chooser.showDialog(primaryStage);
+        if (selectedDirectory != null) {
+            controller.setImagePath(selectedDirectory.getPath());
+            imagePathLabel.setText(TEMPLATE_PATH_PREFIX + selectedDirectory.getPath());
         }
     }
 
