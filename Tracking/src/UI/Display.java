@@ -22,7 +22,7 @@ import tracking.Tracking;
  *
  * @author jeremi
  */
-public class Display extends JPanel implements Scrollable {
+public class Display extends JPanel implements Scrollable, IDisplayer{
 
     private int millisecondsPerUpdate = 1000;
 

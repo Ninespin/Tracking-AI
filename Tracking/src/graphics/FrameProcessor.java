@@ -7,7 +7,7 @@ package graphics;
 
 import IO.IImageProcessor;
 import Shapes.PatternDetector;
-import UI.Display;
+import UI.IDisplayer;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
@@ -18,10 +18,10 @@ import java.awt.image.BufferedImage;
 public class FrameProcessor implements IImageProcessor{
     
     private final Filter filter ;
-    private final Display display;
+    private final IDisplayer display;
     private final PatternDetector out;
     
-    public FrameProcessor(Filter _filter,Display dis,PatternDetector out){
+    public FrameProcessor(Filter _filter,IDisplayer dis,PatternDetector out){
         filter = _filter;
         display = dis;
         this.out = out;

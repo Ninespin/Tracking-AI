@@ -26,7 +26,7 @@ package application;
 import IO.FrameStream;
 import Shapes.PatternDetector;
 import Shapes.Template;
-import UI.Display;
+import UI.fx.FXDisplay;
 import UI.fx.FXErrorMessage;
 import UI.fx.FXOptionPane;
 import graphics.Filter;
@@ -35,8 +35,8 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import javafx.scene.image.ImageView;
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 import remote.controller.RemoteController;
 import tracking.Tracking;
 
@@ -65,17 +65,16 @@ public class TrackingAIController {
     FrameProcessor frameProcessor;
     //
     
-    //TODO remove or change Display
-    @Deprecated
-    private Display display;
+    private FXDisplay display;
+    private ImageView view;
 
     //TODO wrap all config elements in a pre-prepared bundle
-    public TrackingAIController(String templatePath, String imagePath, RemoteController remote, Display display) {
+    public TrackingAIController(String templatePath, String imagePath, RemoteController remote, ImageView view) {
         currentState = ApplicationState.EMPTY;
         this.templatePath = templatePath;
         this.imagePath = imagePath;
         this.remote = remote;
-
+        this.view = view;
     }
 
     /**
@@ -117,6 +116,7 @@ public class TrackingAIController {
         
         tracking = new Tracking(template, frameStream);
         patternDetector = new PatternDetector(null, tracking);
+        display = new FXDisplay(view, tracking);
         frameProcessor = new FrameProcessor(f, display, patternDetector);
         frameStream.setOutput(frameProcessor);
         frameStream.start();

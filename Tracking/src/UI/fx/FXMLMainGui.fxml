@@ -38,7 +38,7 @@
               <rowConstraints>
                 <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="248.0" minHeight="10.0" prefHeight="117.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="222.0" minHeight="10.0" prefHeight="179.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="179.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <Button fx:id="goButton" mnemonicParsing="false" text="Go" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
@@ -91,7 +91,7 @@
                   </ScrollPane>
                   <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" GridPane.rowSpan="2147483647">
                      <content>
-                        <ImageView fitHeight="200.0" fitWidth="500.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="display" fitHeight="200.0" fitWidth="500.0" pickOnBounds="true" preserveRatio="true" />
                      </content>
                   </ScrollPane>
                </children>

@@ -52,9 +52,9 @@ public class FXOptionPane {
      */
     public static int showOptionDialog(String title, String header, String message, ButtonType... options) {
         Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation Dialog with Custom Actions");
-        alert.setHeaderText("Look, a Confirmation Dialog with Custom Actions");
-        alert.setContentText("Choose your option.");
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(message);
 
         ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
 

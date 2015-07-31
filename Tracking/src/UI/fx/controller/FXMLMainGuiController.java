@@ -23,7 +23,7 @@
  */
 package UI.fx.controller;
 
-import UI.Display;
+import UI.fx.FXDisplay;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -34,6 +34,7 @@ import application.TrackingAIController;
 import java.io.File;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -59,6 +60,9 @@ public class FXMLMainGuiController implements Initializable {
     private Label templatePathLabel;
     @FXML
     private Label imagePathLabel;
+    
+    @FXML
+    private ImageView display;
 
     private TrackingAIController controller;
 
@@ -73,8 +77,6 @@ public class FXMLMainGuiController implements Initializable {
     @FXML
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        checkAssertations();
-
         initController();
 
         goButton.setOnAction((ActionEvent ae) -> {
@@ -93,7 +95,7 @@ public class FXMLMainGuiController implements Initializable {
     }
 
     public void initController() {
-        controller = new TrackingAIController("", "", new RemoteController(), new Display());
+        controller = new TrackingAIController("E:\\Documents\\ArnaudDossiers\\Prog\\Templates\\temp.jpg", "E:\\Documents\\ArnaudDossiers\\Prog", new RemoteController(),display);
     }
 
     public void setController(TrackingAIController controller) {
@@ -104,18 +106,6 @@ public class FXMLMainGuiController implements Initializable {
         controller.stop();
         Platform.exit();
         System.exit(0);
-    }
-
-    private void checkAssertations() {
-        /* note : assert is used to verify if variables exsist, but this only 
-         * works if the jvm is launched with the '-enableassertions' option. 
-         * It's main use is for debugging.
-         */
-        assert goButton != null : "The field 'goButton' was not injected properly!";
-        assert chooseTemplateButton != null : "The field 'chooseTemplateButton' was not injected properly!";
-        assert chooseImageButton != null : "The field 'chooseImageButton' was not injected properly!";
-        assert templatePathLabel != null : "The field 'templatePathLabel' was not injected properly!";
-        assert imagePathLabel != null : "The field 'imagePathLabel' was not injected properly!";
     }
 
     //-- Action methods
