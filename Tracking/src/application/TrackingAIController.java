@@ -66,15 +66,14 @@ public class TrackingAIController {
     //
     
     private FXDisplay display;
-    private ImageView view;
 
     //TODO wrap all config elements in a pre-prepared bundle
-    public TrackingAIController(String templatePath, String imagePath, RemoteController remote, ImageView view) {
+    public TrackingAIController(String templatePath, String imagePath, RemoteController remote, FXDisplay display) {
         currentState = ApplicationState.EMPTY;
         this.templatePath = templatePath;
         this.imagePath = imagePath;
         this.remote = remote;
-        this.view = view;
+        this.display = display;
     }
 
     /**
@@ -112,19 +111,17 @@ public class TrackingAIController {
         }
         //
 
-        Filter f = new Filter(Color.red,0);
+        Filter f = new Filter(Color.red,20);
         
         tracking = new Tracking(template, frameStream);
         patternDetector = new PatternDetector(null, tracking);
-        display = new FXDisplay(view, tracking);
+        display.setTracking(tracking);
         frameProcessor = new FrameProcessor(f, display, patternDetector);
         frameStream.setOutput(frameProcessor);
         frameStream.start();
         tracking.start();
         patternDetector.start();
         display.start(tracking);
-
-        frameStream.sendImage();
 
         currentState = ApplicationState.INITIALYSED;
         return true;
@@ -135,6 +132,7 @@ public class TrackingAIController {
      */
     public void start() {
         currentState = ApplicationState.RUNNING;
+        frameStream.sendImage();
     }
 
     /**
@@ -142,6 +140,7 @@ public class TrackingAIController {
      *
      * @deprecated not supported yet.
      */
+    //TODO make stop a thing
     public void stop() {
         currentState = ApplicationState.STOPPED;
     }
@@ -153,6 +152,10 @@ public class TrackingAIController {
     
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public FXDisplay getDisplay() {
+        return display;
     }
     
 }

@@ -41,7 +41,7 @@
                 <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="179.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button fx:id="goButton" mnemonicParsing="false" text="Go" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Button fx:id="goButton" mnemonicParsing="false" styleClass="coolButton" text="Go" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                   <ScrollPane prefHeight="100.0" prefWidth="250.0" vbarPolicy="NEVER" GridPane.columnIndex="1">
                      <content>
                         <GridPane hgap="5.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="85.0" prefWidth="400.0" vgap="10.0">
@@ -78,10 +78,10 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <CheckBox mnemonicParsing="false" text="Show Match %" />
-                              <CheckBox mnemonicParsing="false" text="Paint original frame" GridPane.rowIndex="1" />
-                              <CheckBox mnemonicParsing="false" text="Emphasize shapes" GridPane.rowIndex="2" />
-                              <CheckBox mnemonicParsing="false" text="Auto Resize" GridPane.rowIndex="3" />
+                              <CheckBox fx:id="checkShowMatch" mnemonicParsing="false" text="Show Match %" />
+                              <CheckBox fx:id="checkPaintImage" mnemonicParsing="false" text="Paint original frame" GridPane.rowIndex="1" />
+                              <CheckBox fx:id="checkEmphasizeShapes" mnemonicParsing="false" text="Emphasize shapes" GridPane.rowIndex="2" />
+                              <CheckBox fx:id="checkAutoResize" mnemonicParsing="false" text="Auto Resize" GridPane.rowIndex="3" />
                            </children>
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -89,10 +89,13 @@
                         </GridPane>
                      </content>
                   </ScrollPane>
-                  <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" GridPane.rowSpan="2147483647">
+                  <ScrollPane fx:id="displayView" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" GridPane.rowSpan="2147483647">
                      <content>
                         <ImageView fx:id="display" fitHeight="200.0" fitWidth="500.0" pickOnBounds="true" preserveRatio="true" />
                      </content>
+                     <cursor>
+                        <Cursor fx:constant="CROSSHAIR" />
+                     </cursor>
                   </ScrollPane>
                </children>
             </GridPane>

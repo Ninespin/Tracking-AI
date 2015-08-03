@@ -33,7 +33,9 @@ import javafx.scene.control.Button;
 import application.TrackingAIController;
 import java.io.File;
 import javafx.application.Platform;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -63,6 +65,18 @@ public class FXMLMainGuiController implements Initializable {
     
     @FXML
     private ImageView display;
+    
+    @FXML
+    private ScrollPane displayView;
+    
+    @FXML
+    private CheckBox checkShowMatch;
+    @FXML
+    private CheckBox checkPaintImage;
+    @FXML
+    private CheckBox checkEmphasizeShapes;
+    @FXML
+    private CheckBox checkAutoResize;
 
     private TrackingAIController controller;
 
@@ -92,10 +106,27 @@ public class FXMLMainGuiController implements Initializable {
         chooseImageButton.setOnAction((ActionEvent ae) -> {
             chooseImageButtonAction(ae);
         });
+        
+        checkShowMatch.setOnAction((ActionEvent ae)->{
+            controller.getDisplay().setMatchStringVisible(checkShowMatch.isSelected());
+        });
+        
+        checkPaintImage.setOnAction((ActionEvent ae)->{
+            controller.getDisplay().setPaintOriginal(checkPaintImage.isSelected());
+        });
+        
+        checkEmphasizeShapes.setOnAction((ActionEvent ae)->{
+            controller.getDisplay().setEmphasis(checkEmphasizeShapes.isSelected());
+        });
+        
+        checkAutoResize.setOnAction((ActionEvent ae)->{
+            controller.getDisplay().setAutoResizeImage(checkAutoResize.isSelected());
+        });
     }
 
     public void initController() {
-        controller = new TrackingAIController("E:\\Documents\\ArnaudDossiers\\Prog\\Templates\\temp.jpg", "E:\\Documents\\ArnaudDossiers\\Prog", new RemoteController(),display);
+        FXDisplay dis = new FXDisplay(display, displayView);
+        controller = new TrackingAIController("E:\\Documents\\ArnaudDossiers\\Prog\\Templates\\temp.jpg", "E:\\Documents\\ArnaudDossiers\\Prog", new RemoteController(),dis);
     }
 
     public void setController(TrackingAIController controller) {

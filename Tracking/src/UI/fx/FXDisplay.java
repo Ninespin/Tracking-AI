@@ -31,6 +31,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.Parent;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import tracking.DisplacementVector;
@@ -41,7 +43,9 @@ import tracking.Tracking;
  *
  * @author Arnaud Paré-Vogt & Jérémi Cyr
  */
-public class FXDisplay implements IDisplayer{
+public class FXDisplay implements IDisplayer {
+
+    private ScrollPane parent;
 
     private ImageView display;
     private FramePainter painter;
@@ -60,9 +64,10 @@ public class FXDisplay implements IDisplayer{
     private BufferedImage rawImage;
     private Image lastImage;
 
-    public FXDisplay(ImageView display, Tracking t) {
+    public FXDisplay(ImageView display, ScrollPane parent) {
         this.display = display;
-        this.t = t;
+        this.parent = parent;
+        painter = new FramePainter((int) display.getFitWidth(), (int) display.getFitHeight(), paintOriginal, enphaciseOriginal, showMatchString, autoResizeImage);
         th = new Thread(() -> {
             while (running) {
                 try {
@@ -89,19 +94,43 @@ public class FXDisplay implements IDisplayer{
         if (frame != null) {
             display.setFitHeight(frame.getImage().getHeight());
             display.setFitWidth(frame.getImage().getWidth());
+            if (autoResizeImage) {
+                int width = (int) (parent.getHeight());
+                int height = (int) (parent.getWidth());
+                display.setFitHeight(height);
+                display.setFitWidth(width);
+                painter.setHeight(height);
+                painter.setWidth(width);
+            }
             repaint();
         }
     }
 
+    @Override
     public void setFrame(Frame _frame) {
         frame = _frame;
         refresh();
     }
 
+    private void setDimensions(int width, int height) {
+        display.setFitHeight(height);
+        display.setFitWidth(width);
+        painter.setHeight(height);
+        painter.setWidth(width);
+    }
+
     public void repaint() {
         if (frame != null) {
-            if(painter == null){
-                painter = new FramePainter(frame.getImage().getWidth(), frame.getImage().getHeight(), false, false, false, false);
+            if (autoResizeImage) {
+                int height = (int) (parent.getHeight());
+                int width = (int) (parent.getWidth());
+                display.setPreserveRatio(false);
+                setDimensions(width,height);
+            } else {
+                int height = (int) (frame.getImage().getHeight());
+                int width = (int) (frame.getImage().getWidth());
+                display.setPreserveRatio(true);
+                setDimensions(width,height);
             }
             if (frame.doesItNeedsRepaint()) {
                 rawImage = painter.paintFrame(frame, t != null ? t.getDisplacementVector() : null);
@@ -119,7 +148,7 @@ public class FXDisplay implements IDisplayer{
             g.drawString("There is no frame to draw", rawImage.getWidth() / 2 - (g.getFontMetrics().stringWidth("There is no frame to draw")) / 2, rawImage.getHeight() / 2 - 6);
         }
         lastImage = SwingFXUtils.toFXImage(rawImage, null);
-        Platform.runLater(()->{
+        Platform.runLater(() -> {
             display.setImage(lastImage);
         });
     }
@@ -162,6 +191,10 @@ public class FXDisplay implements IDisplayer{
 
     public void resetLastVector() {
         dv = null;
+    }
+
+    public void setTracking(Tracking t) {
+        this.t = t;
     }
 
 }

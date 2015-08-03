@@ -177,4 +177,11 @@ public class FramePainter {
         this.paintBagkgroundImage = paintBagkgroundImage;
     }
 
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
 }
