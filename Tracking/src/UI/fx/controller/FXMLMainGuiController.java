@@ -24,6 +24,7 @@
 package UI.fx.controller;
 
 import UI.fx.FXDisplay;
+import UI.fx.FXErrorMessage;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -32,15 +33,21 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import application.TrackingAIController;
 import java.io.File;
+import java.io.IOException;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import remote.controller.RemoteController;
 
 /**
@@ -78,6 +85,9 @@ public class FXMLMainGuiController implements Initializable {
     @FXML
     private CheckBox checkAutoResize;
 
+    @FXML
+    private MenuItem menuOpenRemote;
+    
     private TrackingAIController controller;
 
     private Stage primaryStage;
@@ -85,6 +95,8 @@ public class FXMLMainGuiController implements Initializable {
     private final String TEMPLATE_PATH_PREFIX = "Template Path : ";
     private final String IMAGE_PATH_PREFIX = "Image Path : ";
 
+    private Stage remoteFrame;
+    
     /**
      * Initializes the controller class.
      */
@@ -122,6 +134,10 @@ public class FXMLMainGuiController implements Initializable {
         checkAutoResize.setOnAction((ActionEvent ae)->{
             controller.getDisplay().setAutoResizeImage(checkAutoResize.isSelected());
         });
+        
+        menuOpenRemote.setOnAction((ActionEvent ae)->{
+            openRemote();
+        });
     }
 
     public void initController() {
@@ -158,6 +174,26 @@ public class FXMLMainGuiController implements Initializable {
         if (selectedDirectory != null) {
             controller.setImagePath(selectedDirectory.getPath());
             imagePathLabel.setText(TEMPLATE_PATH_PREFIX + selectedDirectory.getPath());
+        }
+    }
+    
+    private void openRemote(){
+        if(remoteFrame==null){
+            remoteFrame = new Stage();
+            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/remote/ui/FXMLRemoteControllerUI.fxml"));
+            Parent root;
+            try {
+                root = loader.load();
+            } catch (IOException ex) {
+                FXErrorMessage.sendMessage("The remote class failed to load. Please check your installation of Tracking-AI and of javaFX.", "Error", ex);
+                remoteFrame = null;
+                return;
+            }
+            remoteFrame.setScene(new Scene(root));
+            remoteFrame.initStyle(StageStyle.UNDECORATED);
+            remoteFrame.show();
+        }else{
+            
         }
     }
 

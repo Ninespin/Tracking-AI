@@ -5,3 +5,7 @@
 .mainFxmlClass {
 
 }
+
+.windowBar{
+    -fx-background-color: #999999;
+}

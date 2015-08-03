@@ -19,6 +19,11 @@
          <top>
             <MenuBar prefHeight="25.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                <menus>
+                  <Menu mnemonicParsing="false" text="Remote">
+                    <items>
+                      <MenuItem fx:id="menuOpenRemote" mnemonicParsing="false" text="Open Remote" />
+                    </items>
+                  </Menu>
                   <Menu mnemonicParsing="false" text="Options">
                     <items>
                       <MenuItem mnemonicParsing="false" text="Open Configuration File" />
